@@ -5,7 +5,7 @@ public class Company {
 	private int idCompany;
 	private String nameCompany;
 	
-	public Company() {
+	public Company() {  
 
 	}
 
