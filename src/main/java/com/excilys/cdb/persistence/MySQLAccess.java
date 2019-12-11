@@ -28,6 +28,12 @@ public class MySQLAccess {
 		}
 	}
     
+//    private static MySQLAccess INSTANCE = new MySQLAccess();
+//    
+//    public static MySQLAccess getInstance() {
+//    	return INSTANCE;
+//    }
+    
     public void close() {
         try {
 

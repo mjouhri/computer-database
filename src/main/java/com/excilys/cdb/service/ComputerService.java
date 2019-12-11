@@ -23,7 +23,7 @@ public class ComputerService {
 	}
 	
 	public Computer getComputerById(int id) {
-		return computerDAO.getComputerById(id).orElse(new Computer());
+		return computerDAO.getComputerById(id).orElse(null);
 	}
 	
 	public boolean newComputer(Computer computer) {

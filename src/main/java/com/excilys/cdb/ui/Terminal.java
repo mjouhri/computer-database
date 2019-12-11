@@ -22,54 +22,57 @@ public class Terminal {
 		ComputerService computerService = new ComputerService(new ComputerDAO(connectionDatabase));
 		CompanyService companyService = new CompanyService(new CompanyDAO(connectionDatabase));
 
-		int x = 1;
+		int x;
 		Scanner scanner;
 		int intScanner;
 		
 		try {
 			do {
 	
-					System.out.println("\n\n");
+					System.out.println();
 					System.out.println("1 - List computers");
 					System.out.println("2 - List companies");
 					System.out.println("3 - Detailed information of one computer");
 					System.out.println("4 - Create a computer");
 					System.out.println("5 - Update a computer");
 					System.out.println("6 - Delete a computer");
+					System.out.println("7 - Detailed information of one company");
 					System.out.println("0 - Exit");
 					System.out.print("Your choice : ");
 					
-					Scanner sc = new Scanner(System.in);
-					x = sc.nextInt();
+					scanner = new Scanner(System.in);
+					x = scanner.nextInt();
 
 					switch (x) {
 					
 					case 1:
-						computerService.getListComputer();
 						for (Computer computer : computerService.getListComputer()) {
 							System.out.println(computer);
 						}
 						break;
 						
 					case 2:
-						companyService.getListCompany();
+						for (Company company : companyService.getListCompany()) {
+							System.out.println(company);
+						}
 						break;
 						
 					case 3:
 						System.out.print("Computer id : ");
-						Scanner scc = new Scanner(System.in);
-						int inId = scc.nextInt();
-						Computer comp = computerService.getComputerById(inId);
+						scanner = new Scanner(System.in);
+						intScanner = scanner.nextInt();
+						Computer comp = computerService.getComputerById(intScanner);
 						System.out.println(comp);
 						
 						break;
 					case 4:
 						if(
 							computerService.newComputer(
-								new Computer("test05",
+								new Computer("test06",
 										LocalDateTime.now(),  
-										LocalDateTime.now(), 
-										new Company(1, "Apple Inc.")))
+										LocalDateTime.now(),
+										new Company(1, "Apple Inc.")
+										))
 							){
 									System.out.println("Computer inserted");
 								}
@@ -78,22 +81,19 @@ public class Terminal {
 						}
 						break;
 					case 5:
-						// update un ordi
-//						date = new Date(System.currentTimeMillis());
-//						computerService.updateComputer(new Computer(577, "test02",date,date ,""));
+						computerService.updateComputer(
+								new Computer(582,
+										"test55",
+										LocalDateTime.now(),  
+										LocalDateTime.now(), 
+										new Company(2, "Apple Inc."))
+								);
 						break;
 					case 6:
-						// delete un ordi
 						System.out.print("Computer id : ");
-						Scanner scid = new Scanner(System.in);
-						
-						System.out.print("are you sure ? y/n : ");
-						Scanner scconfirmation = new Scanner(System.in);
-						
-						if(scconfirmation.toString().equals('y')) {
-							computerService.deleteComputer(575);
-						}
-						
+						scanner = new Scanner(System.in);
+						intScanner = scanner.nextInt();
+						computerService.deleteComputer(intScanner);		
 						break;
 					case 7:
 						
@@ -101,9 +101,7 @@ public class Terminal {
 						scanner = new Scanner(System.in);
 						intScanner = scanner.nextInt();
 						
-						System.out.println( "message : " +
-							companyService.findCompanyById(intScanner)
-								);
+						System.out.println(companyService.findCompanyById(intScanner));
 						
 						break;
 					}
@@ -111,6 +109,7 @@ public class Terminal {
 					
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 					System.err.println(e.getMessage());
 				}
 				finally {

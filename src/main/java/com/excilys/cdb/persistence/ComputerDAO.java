@@ -26,12 +26,14 @@ public class ComputerDAO {
 											    		+ " from computer ct, company cn"
 											    		+ " where ct.company_id = cn.id;";
 	
-	private static final String FIND_ONE_COMPUTER = "select ct.id, ct.name, ct.introduced, ct.discontinued, "
-											    		+ "ct.company_id "
-											    		+ "from computer ct"
-											    		+ "and ct.company_id = ? ";
-	private static final String NEW_COMPUTER = 		"insert into computer (name, introduced, discontinued, company_id)"
-			   + " values (?, ?, ?, ?)";
+	private static final String FIND_ONE_COMPUTER = "select id, name, introduced, discontinued, "
+											    		+ "company_id"
+											    		+ " from computer"
+											    		+ " where id = ? ";
+	
+	private static final String NEW_COMPUTER 	= 		"insert into computer (name, introduced, discontinued, company_id)"
+														+ " values (?, ?, ?, ?)";
+	
 	private static final String UPDATE_COMPUTER =  	"UPDATE computer "
 											      		+ "SET name = ?,"
 											      		+ "introduced = ?, "
@@ -87,48 +89,41 @@ public class ComputerDAO {
 		
 		Computer computer = null; 
 		
-		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);
-				
+		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
 				) {
 			
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
-			resultSet.next();
-		      
-			Computer c = new Computer(resultSet.getInt("id"),
-	        		resultSet.getString("name"), 
-	        		resultSet.getTimestamp("introduced")==null?
-			        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
-			        resultSet.getTimestamp("discontinued")==null?
-					        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
-	        		 new Company(resultSet.getInt("company_id"),
-	        				 resultSet.getString("company_name")));
-			computer = c;
+			if(resultSet.next()) {
+				computer = new Computer(resultSet.getInt("id"),
+		        		resultSet.getString("name"), 
+		        		resultSet.getTimestamp("introduced")==null?
+				        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
+				        resultSet.getTimestamp("discontinued")==null?
+						        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
+		        		 new Company(resultSet.getInt("company_id"),
+		        				 null));
+			}
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return Optional.of(computer);
+		return Optional.ofNullable(computer);
 	}
 	
 	public boolean newComputer(Computer computer) {
-		try {
-			   String query = "insert into computer (name, introduced, discontinued, company_id)"
-					   + " values (?, ?, ?, ?)";
-			   
-			     PreparedStatement preparedStmt = connect.prepareStatement(query);
+		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
 			     preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
 			     preparedStmt.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
-			     //preparedStmt.setString(4, null);
-			     if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getId());
+			     if ( computer.getCompany() !=null ) {
+			    	 	preparedStmt.setInt(4, computer.getCompany().getIdCompany());
+			    	 }
 			     else preparedStmt.setString(4, null);
-//			     preparedStmt.setInt(4, computer!=null?computer.getId():null);
 			     preparedStmt.execute();
-			     
-			     
 			     return true;
 			      
 		} catch (Exception e) {
@@ -140,51 +135,30 @@ public class ComputerDAO {
 	
 	public void updateComputer(Computer computer) {
 		
-		try {
-			// create the java mysql update preparedstatement
-		      String query = ""
-		      		+ "UPDATE computer "
-		      		+ "SET name = ?,"
-		      		+ "introduced = ?, "
-		      		+ "discontinued = ?,"
-		      		+ "company_id = ?"
-		      		+ " WHERE id = ?";
-		      PreparedStatement preparedStmt = connect.prepareStatement(query);  
-		      preparedStmt.setString(1, computer.getName());
-//		      preparedStmt.setDate(2, computer.getIntroduced());
-//		      preparedStmt.setDate(3, computer.getDiscontinued());
-		      preparedStmt.setInt (4, 1);
+		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
+			  preparedStmt.setString (1, computer.getName());
+		      preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
+		      preparedStmt.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
+		      if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getCompany().getIdCompany());
+		      else preparedStmt.setString(4, null);
 		      preparedStmt.setInt   (5, computer.getId());
 		      
-		     
-		      // execute the java preparedstatement
 		      preparedStmt.executeUpdate();
-		      System.out.println("here");
-			
-
-			
 			
 		} catch (Exception e) {
-			System.err.println("computerDAO:update : "+e.getMessage());
+			e.printStackTrace();
 		}
 		
 	}
 	
 	public void deleteComputer(int id) {
 			
-			try {
-				
-				String query = "delete from computer where id = ?";
-			      PreparedStatement preparedStmt = connect.prepareStatement(query);
+			try (PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
-
-			      // execute the preparedstatement
 			      preparedStmt.execute();
 				
-				
-				
 			} catch (Exception e) {
-				System.err.println("computerDAO:deleteComputer : "+e.getMessage());
+				e.printStackTrace();
 			}
 			
 		}
@@ -202,7 +176,7 @@ public class ComputerDAO {
             }
 
         } catch (Exception e) {
-
+        	e.printStackTrace();
         }
     }
 	
@@ -221,9 +195,5 @@ public class ComputerDAO {
 	public void setConnect(Connection connect) {
 		this.connect = connect;
 	}
-	
-	
-	
-	
 
 }

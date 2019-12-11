@@ -36,13 +36,13 @@ public class Computer {
 		this.company = company;
 	}
 	
-	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, String companyName) {
-		super();
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = new Company();
-	}
+//	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, String companyName) {
+//		super();
+//		this.name = name;
+//		this.introduced = introduced;
+//		this.discontinued = discontinued;
+//		this.company = new Company();
+//	}
 	
 	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
 		super();

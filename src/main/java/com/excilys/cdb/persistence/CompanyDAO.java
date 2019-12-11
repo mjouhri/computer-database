@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.excilys.cdb.model.Company;
@@ -19,8 +20,13 @@ public class CompanyDAO {
 	private ResultSet resultSet = null;
 	
 	private static final String FIND_ONE_COMPANY = "select id ,name "
-    		+ "from company "
-    		+ "where id = ? " ;
+										    		+ "from company "
+										    		+ "where id = ? " ;
+	
+	private static final String FIND_ALL_COMPANYS = "select id, name"
+    												+ " from company;";
+	
+	
 	
 	public CompanyDAO() {
 		this.mySQLAccess = new MySQLAccess();
@@ -41,65 +47,43 @@ public class CompanyDAO {
 			
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
-			System.err.println("hello error  2");
 			if(resultSet.next()){
 				
 				company = new Company(resultSet.getInt("id"),
 		        		resultSet.getString("name")
 						);
-
 			}
-			
-			System.err.println("hello error after if");
-			
-
 		}
 		catch (Exception e) {
-			System.err.println("hello error");
 			e.printStackTrace();
 		}
-		
 		
 		return Optional.ofNullable(company);
 		
 	}
 	
 	
-	public ArrayList<Company> getListCompany() {
+	public List<Company> getListCompany() {
 		
-		ArrayList list = new ArrayList<Company>();
+		List<Company> list = new ArrayList<Company>();
 		
 		try {
 			statement = connect.createStatement();
 			
 			resultSet = statement
-                    .executeQuery("select id, name"
-                    		+ " from company;"
-                    		);
-			
-			
+                    .executeQuery(FIND_ALL_COMPANYS);
 			
 		      while (resultSet.next())
 		      {
-		        int id = resultSet.getInt("id");
-		        String name = resultSet.getString("name");
-		        
-		        
-		        // recuperer la company
-		        Company c = new Company(id, name);
-		        System.out.println(c.toString());
-		        
+		        Company c = new Company(
+		        		resultSet.getInt("id"),
+		        		resultSet.getString("name"));
 		        list.add(c);
-		   
 		      }
-			
-		
-            
 		} catch (Exception e) {
-			System.err.println("CompanyDAO:getListCompany : " +e.getMessage());
+			e.printStackTrace();
 		}
-		
-		
+	
 		return list;
 	}
 	
