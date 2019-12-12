@@ -9,9 +9,16 @@ import com.excilys.cdb.persistence.ComputerDAO;
 public class ComputerService {
 	private ComputerDAO computerDAO;
 	
-	public ComputerService() {
-		this.computerDAO = new ComputerDAO();
+	private static ComputerService INSTANCE = null;
+	
+	private ComputerService() {
+		this.computerDAO = ComputerDAO.getInstance();
 		
+	}
+	
+	public static ComputerService getInstance() {
+		if (INSTANCE == null) INSTANCE = new ComputerService();
+		return INSTANCE;
 	}
 	
 	public ComputerService(ComputerDAO computerDAO) {

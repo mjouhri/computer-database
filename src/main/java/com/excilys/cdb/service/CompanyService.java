@@ -4,13 +4,20 @@ import java.util.List;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDAO;
+import com.excilys.cdb.persistence.MySQLAccess;
 
 public class CompanyService {
 	
 	private CompanyDAO companyDAO;
+	private static CompanyService INSTANCE = null;
 	
-	public CompanyService() {
-		this.companyDAO = new CompanyDAO();
+	private CompanyService() {
+		this.companyDAO = CompanyDAO.getInstance();
+	}
+	
+	public static CompanyService getInstance() {
+		if(INSTANCE == null) INSTANCE = new CompanyService();
+		return INSTANCE;
 	}
 	
 	public CompanyService(CompanyDAO companyDAO) {

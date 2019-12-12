@@ -43,11 +43,17 @@ public class ComputerDAO {
 	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";;
 
 	
-	public ComputerDAO() {
-		this.mySQLAccess = new MySQLAccess();
+	public static ComputerDAO INSTANCE = null;
+	
+	private ComputerDAO() {
+		this.mySQLAccess = MySQLAccess.getInstance();
 		this.connect = this.mySQLAccess.getConnect();
 	}
 	
+	public static ComputerDAO getInstance() {
+		if (INSTANCE == null) INSTANCE = new ComputerDAO();
+		return INSTANCE;
+	}
 
 	public ComputerDAO(MySQLAccess mySQLAccess) {
 		super();
@@ -65,15 +71,23 @@ public class ComputerDAO {
 		      while (resultSet.next())
 		      {
 		        
-		        Computer c = new Computer(resultSet.getInt("id"),
-		        		resultSet.getString("name"), 
-		        		resultSet.getTimestamp("introduced")==null?
-				        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
-				        resultSet.getTimestamp("discontinued")==null?
-						        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
-		        		 new Company(resultSet.getInt("company_id"),
-		        				 resultSet.getString("company_name")));
-		     
+		        Computer c = new Computer.ComputerBuilder()
+						.setId(resultSet.getInt("id"))
+						.setName(resultSet.getString("name"))
+						.setIntroduced(resultSet
+											.getTimestamp("introduced")==null?
+											null:resultSet.getTimestamp("introduced")
+											.toLocalDateTime())
+						.setDiscontinued(resultSet
+										.getTimestamp("discontinued")==null?
+										null:resultSet.getTimestamp("discontinued")
+										.toLocalDateTime())
+						.setCompany(new Company.CompanyBuilder()
+										.idCompany(resultSet.getInt("company_id"))
+										.nameCompany(null)
+										.build())
+						.build();
+		        		 		 		     
 		        list.add(c);   
 		      }
 		      
@@ -96,14 +110,24 @@ public class ComputerDAO {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			if(resultSet.next()) {
-				computer = new Computer(resultSet.getInt("id"),
-		        		resultSet.getString("name"), 
-		        		resultSet.getTimestamp("introduced")==null?
-				        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
-				        resultSet.getTimestamp("discontinued")==null?
-						        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
-		        		 new Company(resultSet.getInt("company_id"),
-		        				 null));
+				computer = new Computer.ComputerBuilder()
+						.setId(resultSet.getInt("id"))
+						.setName(resultSet.getString("name"))
+						.setIntroduced(resultSet
+											.getTimestamp("introduced")==null?
+											null:resultSet.getTimestamp("introduced")
+											.toLocalDateTime())
+						.setDiscontinued(resultSet
+										.getTimestamp("discontinued")==null?
+										null:resultSet.getTimestamp("discontinued")
+										.toLocalDateTime())
+						.setCompany(new Company.CompanyBuilder()
+										.idCompany(resultSet.getInt("company_id"))
+										.nameCompany(null)
+										.build())
+						.build();
+
+
 			}
 			
 

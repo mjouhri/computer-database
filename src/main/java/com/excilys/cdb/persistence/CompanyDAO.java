@@ -27,10 +27,18 @@ public class CompanyDAO {
     												+ " from company;";
 	
 	
+	private static CompanyDAO INSTANCE = null;
 	
-	public CompanyDAO() {
-		this.mySQLAccess = new MySQLAccess();
+	
+	private CompanyDAO() {
+		this.mySQLAccess = MySQLAccess.getInstance();
 		this.connect = this.mySQLAccess.getConnect();
+	}
+	
+	public static CompanyDAO getInstance() {
+		if (INSTANCE == null) INSTANCE = new CompanyDAO();
+		return INSTANCE;
+		
 	}
 	
 	public CompanyDAO(MySQLAccess mySQLAccess) {
@@ -49,9 +57,10 @@ public class CompanyDAO {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if(resultSet.next()){
 				
-				company = new Company(resultSet.getInt("id"),
-		        		resultSet.getString("name")
-						);
+				company = new Company.CompanyBuilder()
+						.idCompany(resultSet.getInt("id"))
+		        		.nameCompany(resultSet.getString("name"))
+		        		.build();
 			}
 		}
 		catch (Exception e) {
@@ -75,9 +84,10 @@ public class CompanyDAO {
 			
 		      while (resultSet.next())
 		      {
-		        Company c = new Company(
-		        		resultSet.getInt("id"),
-		        		resultSet.getString("name"));
+		        Company c = new Company.CompanyBuilder()
+						.idCompany(resultSet.getInt("id"))
+		        		.nameCompany(resultSet.getString("name"))
+		        		.build();
 		        list.add(c);
 		      }
 		} catch (Exception e) {

@@ -9,12 +9,7 @@ public class Company {
 
 	}
 
-	public Company(int idCompany, String nameCompany) {
-		super();
-		this.idCompany = idCompany; 
-		this.nameCompany = nameCompany;
-	}
-
+	
 	public int getIdCompany() {
 		return idCompany;
 	}
@@ -62,6 +57,33 @@ public class Company {
 		} else if (!nameCompany.equals(other.nameCompany))
 			return false;
 		return true;
+	}
+	
+	private Company(CompanyBuilder builder) {
+		this.idCompany = builder.idCompany;
+		this.nameCompany = builder.nameCompany;
+	}
+	
+	public static class CompanyBuilder {
+		private int idCompany;
+		private String nameCompany;
+
+		public CompanyBuilder() {
+		}
+
+		public CompanyBuilder idCompany(int idCompany) {
+			this.idCompany = idCompany;
+			return this;
+		}
+
+		public CompanyBuilder nameCompany(String nameCompany) {
+			this.nameCompany = nameCompany;
+			return this;
+		}
+
+		public Company build() {
+			return new Company(this);
+		}
 	}
 	
 	

@@ -18,7 +18,7 @@ public class Terminal {
 
 	public static void main(String[] args) {
 		
-		MySQLAccess connectionDatabase = new MySQLAccess();
+		MySQLAccess connectionDatabase = MySQLAccess.getInstance();
 		ComputerService computerService = new ComputerService(new ComputerDAO(connectionDatabase));
 		CompanyService companyService = new CompanyService(new CompanyDAO(connectionDatabase));
 
@@ -68,12 +68,19 @@ public class Terminal {
 					case 4:
 						if(
 							computerService.newComputer(
-								new Computer("test06",
-										LocalDateTime.now(),  
-										LocalDateTime.now(),
-										new Company(1, "Apple Inc.")
-										))
-							){
+									
+								new Computer.ComputerBuilder()
+									.setName("test06")
+									.setIntroduced(LocalDateTime.now())
+									.setDiscontinued(LocalDateTime.now())
+									.setCompany(new Company.CompanyBuilder()
+													.idCompany(1)
+													.nameCompany("Apple Inc.")
+													.build())
+									.build()
+								)
+							
+						){
 									System.out.println("Computer inserted");
 								}
 						else {
@@ -82,12 +89,18 @@ public class Terminal {
 						break;
 					case 5:
 						computerService.updateComputer(
-								new Computer(582,
-										"test55",
-										LocalDateTime.now(),  
-										LocalDateTime.now(), 
-										new Company(2, "Apple Inc."))
-								);
+								
+								new Computer.ComputerBuilder()
+								.setName("test06")
+								.setIntroduced(LocalDateTime.now())
+								.setDiscontinued(LocalDateTime.now())
+								.setCompany(new Company.CompanyBuilder()
+												.idCompany(1)
+												.nameCompany("Apple Inc.")
+												.build())
+								.build()
+
+						);
 						break;
 					case 6:
 						System.out.print("Computer id : ");

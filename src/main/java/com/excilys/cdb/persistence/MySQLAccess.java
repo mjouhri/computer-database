@@ -14,10 +14,11 @@ public class MySQLAccess {
 	    
     private Connection connect = null;
     
+    private static MySQLAccess INSTANCE = null;
     
-    // !!!!!! Singleton !!!!!!
+   
     
-    public MySQLAccess() {
+    private MySQLAccess() {
 		try {	 
             connect = DriverManager.getConnection(url, user, passwd);
 			
@@ -27,12 +28,14 @@ public class MySQLAccess {
 			System.out.println("Connexion error : "+e.getMessage());
 		}
 	}
+     
     
-//    private static MySQLAccess INSTANCE = new MySQLAccess();
-//    
-//    public static MySQLAccess getInstance() {
-//    	return INSTANCE;
-//    }
+    public static MySQLAccess getInstance() {
+    	if (INSTANCE == null) 
+    		INSTANCE = new MySQLAccess(); 
+  
+        return INSTANCE; 
+    }
     
     public void close() {
         try {
