@@ -3,6 +3,10 @@ package com.excilys.cdb.ui;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.CompanyDAO;
@@ -12,11 +16,15 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
-// old
 public class Terminal {
-
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Terminal.class);	
 
 	public static void main(String[] args) {
+		
+		BasicConfigurator.configure();
+
+		LOGGER.info("Start ...");
 		
 		MySQLAccess connectionDatabase = MySQLAccess.getInstance();
 		ComputerService computerService = new ComputerService(new ComputerDAO(connectionDatabase));
@@ -39,6 +47,7 @@ public class Terminal {
 					System.out.println("7 - Detailed information of one company");
 					System.out.println("0 - Exit");
 					System.out.print("Your choice : ");
+					
 					
 					scanner = new Scanner(System.in);
 					x = scanner.nextInt();
@@ -126,10 +135,10 @@ public class Terminal {
 					System.err.println(e.getMessage());
 				}
 				finally {
-					// Close database
 					companyService.close();
 					computerService.close();
 					connectionDatabase.close();
+					LOGGER.info("End .");
 				}
 	
 		

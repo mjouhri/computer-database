@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
@@ -45,12 +48,17 @@ public class ComputerDAO {
 	
 	public static ComputerDAO INSTANCE = null;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
+
+	
 	private ComputerDAO() {
 		this.mySQLAccess = MySQLAccess.getInstance();
 		this.connect = this.mySQLAccess.getConnect();
 	}
 	
 	public static ComputerDAO getInstance() {
+		LOGGER.info("getInstance ComputerDAO");
+
 		if (INSTANCE == null) INSTANCE = new ComputerDAO();
 		return INSTANCE;
 	}
@@ -91,8 +99,13 @@ public class ComputerDAO {
 		        list.add(c);   
 		      }
 		      
+		      
+			LOGGER.info("success get list computers ");
+
+		      
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed get list computers ");
 		}
 
 		return list;
@@ -130,9 +143,10 @@ public class ComputerDAO {
 
 			}
 			
-
+			LOGGER.info("success get computer by id : " + id);
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed get computer by id : " + id + " : error " + e.getMessage());
 		}
 
 		return Optional.ofNullable(computer);
@@ -148,10 +162,13 @@ public class ComputerDAO {
 			    	 }
 			     else preparedStmt.setString(4, null);
 			     preparedStmt.execute();
+			     
+			     LOGGER.info("success creat new computer");
 			     return true;
 			      
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed creat new computer");
 			return false;
 		}
 		
@@ -168,9 +185,11 @@ public class ComputerDAO {
 		      preparedStmt.setInt   (5, computer.getId());
 		      
 		      preparedStmt.executeUpdate();
+		      LOGGER.info("success update new computer");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed creat update computer");
 		}
 		
 	}
@@ -180,9 +199,11 @@ public class ComputerDAO {
 			try (PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
 			      preparedStmt.execute();
+			      LOGGER.info("success delete new computer");
 				
 			} catch (Exception e) {
 				e.printStackTrace();
+				LOGGER.info("failed delete new computer");
 			}
 			
 		}

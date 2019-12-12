@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.model.Computer;
+
 
 public class CompanyDAO {
 	
@@ -29,6 +32,7 @@ public class CompanyDAO {
 	
 	private static CompanyDAO INSTANCE = null;
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
 	private CompanyDAO() {
 		this.mySQLAccess = MySQLAccess.getInstance();
@@ -36,6 +40,8 @@ public class CompanyDAO {
 	}
 	
 	public static CompanyDAO getInstance() {
+		LOGGER.info("getInstance CompanyDAO");
+		
 		if (INSTANCE == null) INSTANCE = new CompanyDAO();
 		return INSTANCE;
 		
@@ -47,8 +53,7 @@ public class CompanyDAO {
 		connect = this.mySQLAccess.getConnect();
 	}
 	
-	public Optional<Company> getCompanyById(int id) {
-		
+	public Optional<Company> getCompanyById(int id) {		
 		Company company = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
@@ -62,9 +67,11 @@ public class CompanyDAO {
 		        		.nameCompany(resultSet.getString("name"))
 		        		.build();
 			}
+			LOGGER.info("success get company by id : " + id);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed get company by id : " + id + " : error " + e.getMessage());
 		}
 		
 		return Optional.ofNullable(company);
@@ -73,6 +80,7 @@ public class CompanyDAO {
 	
 	
 	public List<Company> getListCompany() {
+		
 		
 		List<Company> list = new ArrayList<Company>();
 		
@@ -90,8 +98,10 @@ public class CompanyDAO {
 		        		.build();
 		        list.add(c);
 		      }
+		      LOGGER.info("success :  get list companies");
 		} catch (Exception e) {
 			e.printStackTrace();
+			LOGGER.info("failed :  get list companies");
 		}
 	
 		return list;
