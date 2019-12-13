@@ -23,6 +23,8 @@ public class Terminal {
 	public static void main(String[] args) {
 		
 		BasicConfigurator.configure();
+		
+		
 
 		LOGGER.info("Start ...");
 		
@@ -140,6 +142,7 @@ public class Terminal {
 					connectionDatabase.close();
 					LOGGER.info("End .");
 				}
+		
 	
 		
 	}
