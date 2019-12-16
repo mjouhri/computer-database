@@ -137,8 +137,6 @@ public class Terminal {
 					System.err.println(e.getMessage());
 				}
 				finally {
-					companyService.close();
-					computerService.close();
 					connectionDatabase.close();
 					LOGGER.info("End .");
 				}

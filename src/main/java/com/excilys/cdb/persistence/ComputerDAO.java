@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -19,15 +20,10 @@ import com.excilys.cdb.model.Computer;
 
 public class ComputerDAO {
 	
-	private MySQLAccess mySQLAccess;
-	private Connection connect = null;
-	private Statement statement = null;
-	private ResultSet resultSet = null;
-	
 	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued, "
 											    		+ "ct.company_id, cn.name as company_name"
 											    		+ " from computer ct, company cn"
-											    		+ " where ct.company_id = cn.id;";
+											    		+ " where ct.company_id = cn.id;";  // ** left join
 	
 	private static final String FIND_ONE_COMPUTER = "select id, name, introduced, discontinued, "
 											    		+ "company_id"
@@ -52,8 +48,6 @@ public class ComputerDAO {
 
 	
 	private ComputerDAO() {
-		this.mySQLAccess = MySQLAccess.getInstance();
-		this.connect = this.mySQLAccess.getConnect();
 	}
 	
 	public static ComputerDAO getInstance() {
@@ -65,11 +59,11 @@ public class ComputerDAO {
 
 	public ComputerDAO(MySQLAccess mySQLAccess) {
 		super();
-		this.mySQLAccess = mySQLAccess;
-		connect = this.mySQLAccess.getConnect();
 	}
 	
 	public List<Computer> getListComputer() {
+		
+		Connection connect = MySQLAccess.getInstance().getConnect();
 		
 		List<Computer> list = new ArrayList<Computer>();
 		
@@ -99,21 +93,34 @@ public class ComputerDAO {
 		        list.add(c);   
 		      }
 		      
-		      
 			LOGGER.info("success get list computers ");
 
 		      
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (SQLException e) {
 			LOGGER.info("failed get list computers ");
+			e.printStackTrace();
+		}
+		finally {
+			closeConnexion(connect);
 		}
 
 		return list;
+	}
+
+	private void closeConnexion(Connection connect) {
+		try {
+			connect.close();
+			LOGGER.info("success : closing database");
+		} catch (Exception e2) {
+			e2.printStackTrace();
+			LOGGER.info("failed : closing database");
+		}
 	}
 	
 	
 	public Optional<Computer> getComputerById(int id) {
 		
+		Connection connect = MySQLAccess.getInstance().getConnect();
 		Computer computer = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
@@ -144,15 +151,20 @@ public class ComputerDAO {
 			}
 			
 			LOGGER.info("success get computer by id : " + id);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			LOGGER.info("failed get computer by id : " + id + " : error " + e.getMessage());
+		}
+		finally {
+			closeConnexion(connect);
 		}
 
 		return Optional.ofNullable(computer);
 	}
 	
 	public boolean newComputer(Computer computer) {
+		Connection connect = MySQLAccess.getInstance().getConnect();
+
 		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
 			     preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
@@ -166,16 +178,19 @@ public class ComputerDAO {
 			     LOGGER.info("success creat new computer");
 			     return true;
 			      
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			LOGGER.info("failed creat new computer");
 			return false;
+		}
+		finally {
+			closeConnexion(connect);
 		}
 		
 	}
 	
 	public void updateComputer(Computer computer) {
-		
+		Connection connect = MySQLAccess.getInstance().getConnect();
 		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
 			  preparedStmt.setString (1, computer.getName());
 		      preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
@@ -187,58 +202,32 @@ public class ComputerDAO {
 		      preparedStmt.executeUpdate();
 		      LOGGER.info("success update new computer");
 			
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 			LOGGER.info("failed creat update computer");
+		}
+		finally {
+			closeConnexion(connect);
 		}
 		
 	}
 	
 	public void deleteComputer(int id) {
-			
+		Connection connect = MySQLAccess.getInstance().getConnect();
 			try (PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
 			      preparedStmt.execute();
 			      LOGGER.info("success delete new computer");
 				
-			} catch (Exception e) {
-				e.printStackTrace();
-				LOGGER.info("failed delete new computer");
+			} catch (SQLException e) {
+					e.printStackTrace();
+					LOGGER.info("failed delete new computer");
+			}
+			finally {
+				closeConnexion(connect);
 			}
 			
 		}
 	
-	
-	
-    public void close() {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-
-            if (statement != null) {
-                statement.close();
-            }
-
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    }
-	
-	public MySQLAccess getMySQLAccess() {
-		return mySQLAccess;
-	}
-
-	public void setMySQLAccess(MySQLAccess mySQLAccess) {
-		this.mySQLAccess = mySQLAccess;
-	}
-
-	public Connection getConnect() {
-		return connect;
-	}
-
-	public void setConnect(Connection connect) {
-		this.connect = connect;
-	}
 
 }

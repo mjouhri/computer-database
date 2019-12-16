@@ -32,9 +32,6 @@ public class CompanyService {
 		return companyDAO.getCompanyById(id).orElse(null);
 	}
 	
-	public void close() {
-		companyDAO.close();
-	}
 	
 	
 	

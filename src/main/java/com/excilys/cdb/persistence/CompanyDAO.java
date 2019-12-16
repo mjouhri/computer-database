@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,7 @@ import com.excilys.cdb.model.Company;
 
 
 public class CompanyDAO {
-	
-	private MySQLAccess mySQLAccess;
-	private Connection connect = null;
-	private Statement statement = null;
-	private ResultSet resultSet = null;
+
 	
 	private static final String FIND_ONE_COMPANY = "select id ,name "
 										    		+ "from company "
@@ -35,8 +32,6 @@ public class CompanyDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
 	private CompanyDAO() {
-		this.mySQLAccess = MySQLAccess.getInstance();
-		this.connect = this.mySQLAccess.getConnect();
 	}
 	
 	public static CompanyDAO getInstance() {
@@ -49,29 +44,28 @@ public class CompanyDAO {
 	
 	public CompanyDAO(MySQLAccess mySQLAccess) {
 		super();
-		this.mySQLAccess = mySQLAccess;
-		connect = this.mySQLAccess.getConnect();
 	}
 	
-	public Optional<Company> getCompanyById(int id) {		
+	public Optional<Company> getCompanyById(int id) {
+		Connection connect = MySQLAccess.getInstance().getConnect();
 		Company company = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
-			
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
+			
 			if(resultSet.next()){
-				
 				company = new Company.CompanyBuilder()
 						.idCompany(resultSet.getInt("id"))
 		        		.nameCompany(resultSet.getString("name"))
 		        		.build();
 			}
 			LOGGER.info("success get company by id : " + id);
-		}
-		catch (Exception e) {
+			resultSet.close();
+		} catch (SQLException e) {
 			e.printStackTrace();
-			LOGGER.info("failed get company by id : " + id + " : error " + e.getMessage());
+		} finally {
+			closeConnexion(connect);
 		}
 		
 		return Optional.ofNullable(company);
@@ -81,14 +75,13 @@ public class CompanyDAO {
 	
 	public List<Company> getListCompany() {
 		
+		Connection connect = MySQLAccess.getInstance().getConnect();
 		
 		List<Company> list = new ArrayList<Company>();
 		
-		try {
-			statement = connect.createStatement();
-			
-			resultSet = statement
-                    .executeQuery(FIND_ALL_COMPANYS);
+		try (PreparedStatement statement = connect.prepareStatement(FIND_ALL_COMPANYS);
+				ResultSet resultSet = statement.executeQuery();)
+				{
 			
 		      while (resultSet.next())
 		      {
@@ -99,28 +92,25 @@ public class CompanyDAO {
 		        list.add(c);
 		      }
 		      LOGGER.info("success :  get list companies");
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
-			LOGGER.info("failed :  get list companies");
+		} 
+		finally {
+			closeConnexion(connect);
 		}
 	
 		return list;
 	}
+
+	private void closeConnexion(Connection connect) {
+		try {
+			connect.close();
+			LOGGER.info("success : closing database");
+		} catch (Exception e2) {
+			e2.printStackTrace();
+			LOGGER.info("failed : closing database");
+		}
+	}
 	
-	
-	 public void close() {
-	        try {
-	            if (resultSet != null) {
-	                resultSet.close();
-	            }
-
-	            if (statement != null) {
-	                statement.close();
-	            }
-
-	        } catch (Exception e) {
-
-	        }
-	    }
 
 }

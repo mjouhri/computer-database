@@ -8,8 +8,13 @@ public class Company {
 	public Company() {  
 
 	}
-
 	
+	public Company(int idCompany, String nameCompany) {
+		super();
+		this.idCompany = idCompany;
+		this.nameCompany = nameCompany;
+	}
+
 	public int getIdCompany() {
 		return idCompany;
 	}

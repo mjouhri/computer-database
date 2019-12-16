@@ -44,11 +44,5 @@ public class ComputerService {
 	public void deleteComputer(int id) {
 		computerDAO.deleteComputer(id);
 	}
-	
-	public void close() {
-		computerDAO.close();
-	}
-	
-	
 
 }

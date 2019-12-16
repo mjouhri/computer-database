@@ -24,21 +24,13 @@ public class MySQLAccess {
     private static final Logger LOGGER = LoggerFactory.getLogger(Terminal.class);	
     
    
-    
-    private MySQLAccess() {
-		try {	 
-            connect = DriverManager.getConnection(url, user, passwd);
-			LOGGER.info("database connected");
-			
-		} catch (Exception e) {
-			LOGGER.info("database not connected, error : " + e.getMessage());
-		}
-	}
      
+    private MySQLAccess() {
+		 
+	}
     
     public static MySQLAccess getInstance() {
     	if (INSTANCE == null) {
-    		LOGGER.info("Instancier la base de donnée");
     		INSTANCE = new MySQLAccess(); 
     	}
   
@@ -58,16 +50,32 @@ public class MySQLAccess {
     }
     
     public Connection getConnect() {
-		return connect;
+    	
+    	try {	 
+			if(System.getProperty("test") != null && System.getProperty("test").equals("true")) {
+				String urlTest ="jdbc:h2:mem:test;INIT=RUNSCRIPT FROM 'classpath:create.sql'";
+				String userTest = "";
+				String passwdTest = "";
+				LOGGER.info("Connexion database h2 ");
+				if(connect == null || connect.isClosed()) {
+					connect = DriverManager.getConnection(urlTest, userTest, passwdTest);
+				}
+			
+			} else {
+				LOGGER.info("Connexion database MySQL ");
+	            if(connect == null || connect.isClosed()) {
+					connect = DriverManager.getConnection(url, user, passwd);
+				}
+				
+			}
+			LOGGER.info("database connected");
+			
+		} catch (Exception e) {
+			LOGGER.info("database not connected, error : " + e.getMessage());
+		}
+    	
+    	return connect;
 	}
-
-
-	public void setConnect(Connection connect) {
-		this.connect = connect;
-	}
-
-
-
 
 	
 
