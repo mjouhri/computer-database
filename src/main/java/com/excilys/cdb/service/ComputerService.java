@@ -8,9 +8,9 @@ import com.excilys.cdb.persistence.ComputerDAO;
 
 public class ComputerService {
 	private ComputerDAO computerDAO;
-	
+
 	private static ComputerService INSTANCE = null;
-	
+
 	private ComputerService() {
 		this.computerDAO = ComputerDAO.getInstance();
 		

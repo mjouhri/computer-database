@@ -10,7 +10,7 @@ public class CompanyService {
 	
 	private CompanyDAO companyDAO;
 	private static CompanyService INSTANCE = null;
-	
+
 	private CompanyService() {
 		this.companyDAO = CompanyDAO.getInstance();
 	}

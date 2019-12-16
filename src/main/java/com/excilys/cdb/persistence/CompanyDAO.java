@@ -39,7 +39,7 @@ public class CompanyDAO {
 		
 		if (INSTANCE == null) INSTANCE = new CompanyDAO();
 		return INSTANCE;
-		
+		 
 	}
 	
 	public CompanyDAO(MySQLAccess mySQLAccess) {

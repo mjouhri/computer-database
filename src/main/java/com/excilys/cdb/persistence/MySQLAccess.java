@@ -2,8 +2,6 @@ package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +62,7 @@ public class MySQLAccess {
 			} else {
 				LOGGER.info("Connexion database MySQL ");
 	            if(connect == null || connect.isClosed()) {
+	            	Class.forName("com.mysql.jdbc.Driver");
 					connect = DriverManager.getConnection(url, user, passwd);
 				}
 				

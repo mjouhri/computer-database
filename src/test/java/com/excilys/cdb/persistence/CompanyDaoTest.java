@@ -22,7 +22,7 @@ public class CompanyDaoTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDaoTest.class);	
 	
 	@BeforeAll
-	public static void setup() {  
+	public static void beforeAll() {  
 		BasicConfigurator.configure();
 		LOGGER.info("@BeforeAll");
 	}
@@ -53,7 +53,7 @@ public class CompanyDaoTest {
 	
 	
 	@AfterEach
-	void tearDown() {
+	void afterEach() {
 		LOGGER.info("@AfterEach "); 
 		System.setProperty("test","false");
 	}
