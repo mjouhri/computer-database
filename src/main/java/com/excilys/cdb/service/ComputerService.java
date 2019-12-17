@@ -20,7 +20,7 @@ public class ComputerService {
 		if (INSTANCE == null) INSTANCE = new ComputerService();
 		return INSTANCE;
 	}
-	
+
 	public ComputerService(ComputerDAO computerDAO) {
 		this.computerDAO = computerDAO;
 	}	
@@ -44,5 +44,9 @@ public class ComputerService {
 	public void deleteComputer(int id) {
 		computerDAO.deleteComputer(id);
 	}
+	
+	public List<Computer>  getPage(int page, int length) {
+		return computerDAO.getPage(page, length);
+	} 
 
 }

@@ -20,17 +20,18 @@ import com.excilys.cdb.model.Computer;
 
 public class ComputerDAO {
 	
-	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued, "
-											    		+ "ct.company_id, cn.name as company_name"
-											    		+ " from computer ct, company cn"
-											    		+ " where ct.company_id = cn.id;";  // ** left join
+	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+											    		+ " ct.company_id, company.id, company.name as company_name"
+											    		+ " from computer ct"
+											    		+ " LEFT JOIN company ON ct.company_id = company.id";
 	
-	private static final String FIND_ONE_COMPUTER = "select id, name, introduced, discontinued, "
-											    		+ "company_id"
-											    		+ " from computer"
-											    		+ " where id = ? ";
+	private static final String FIND_ONE_COMPUTER = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+										    		+ " ct.company_id, company.id, company.name as company_name"
+										    		+ " from computer ct"
+										    		+ " LEFT JOIN company ON ct.company_id = company.id"
+											    	+ " where id = ? ";
 	
-	private static final String NEW_COMPUTER 	= 		"insert into computer (name, introduced, discontinued, company_id)"
+	private static final String NEW_COMPUTER 	= 	"insert into computer (name, introduced, discontinued, company_id)"
 														+ " values (?, ?, ?, ?)";
 	
 	private static final String UPDATE_COMPUTER =  	"UPDATE computer "
@@ -39,7 +40,12 @@ public class ComputerDAO {
 											      		+ "discontinued = ?,"
 											      		+ "company_id = ?"
 											      		+ " WHERE id = ?";
-	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";;
+	
+	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";
+	
+	private static final String FIND_PAGE = " LIMIT ?, ?";
+	
+	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
 
 	
 	public static ComputerDAO INSTANCE = null;
@@ -73,22 +79,7 @@ public class ComputerDAO {
 		      while (resultSet.next())
 		      {
 		        
-		        Computer c = new Computer.ComputerBuilder()
-						.setId(resultSet.getInt("id"))
-						.setName(resultSet.getString("name"))
-						.setIntroduced(resultSet
-											.getTimestamp("introduced")==null?
-											null:resultSet.getTimestamp("introduced")
-											.toLocalDateTime())
-						.setDiscontinued(resultSet
-										.getTimestamp("discontinued")==null?
-										null:resultSet.getTimestamp("discontinued")
-										.toLocalDateTime())
-						.setCompany(new Company.CompanyBuilder()
-										.idCompany(resultSet.getInt("company_id"))
-										.nameCompany(null)
-										.build())
-						.build();
+		    	  Computer c = resultsetToComputer(resultSet);
 		        		 		 		     
 		        list.add(c);   
 		      }
@@ -106,6 +97,78 @@ public class ComputerDAO {
 
 		return list;
 	}
+	
+
+	public List<Computer> getPage(int page, int length) {
+		
+		Connection connect = MySQLAccess.getInstance().getConnect();
+		
+		List<Computer> list = new ArrayList<Computer>();
+		
+		try{
+			
+			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
+			ResultSet resultSet = preparedStmt.executeQuery();
+		
+			if(resultSet.next()) {
+				
+				int count = resultSet.getInt("nb");
+				
+				LOGGER.info("Size computer table : " + count );
+				
+				preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS 
+						+  FIND_PAGE);
+				
+				int startPage = (count / length) * (page - 1);
+				
+				preparedStmt.setInt(1, startPage);
+				preparedStmt.setInt(2, length);
+				resultSet = preparedStmt.executeQuery();
+				
+			      while (resultSet.next())
+			      {
+			        
+			        Computer c = resultsetToComputer(resultSet);
+			        		 		 		     
+			        list.add(c);   
+			      }
+			      
+				LOGGER.info("success get list computers ");
+				
+			}
+		      
+		} catch (SQLException e) {
+			LOGGER.info("failed get list computers ");
+			e.printStackTrace();
+		}
+		finally {
+			closeConnexion(connect);
+		}
+
+		return list;
+	}
+
+	private Computer resultsetToComputer(ResultSet resultSet) throws SQLException {
+		Computer c = new Computer.ComputerBuilder()
+				.setId(resultSet.getInt("id"))
+				.setName(resultSet.getString("name"))
+				.setIntroduced(resultSet
+									.getTimestamp("introduced")==null?
+									null:resultSet.getTimestamp("introduced")
+									.toLocalDateTime())
+				.setDiscontinued(resultSet
+								.getTimestamp("discontinued")==null?
+								null:resultSet.getTimestamp("discontinued")
+								.toLocalDateTime())
+				.setCompany(new Company.CompanyBuilder()
+								.idCompany(resultSet.getInt("company_id"))
+								.nameCompany(resultSet.getString("company_name"))
+								.build())
+				.build();
+		return c;
+	}
+	
+	
 
 	private void closeConnexion(Connection connect) {
 		try {
@@ -130,26 +193,9 @@ public class ComputerDAO {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
 			if(resultSet.next()) {
-				computer = new Computer.ComputerBuilder()
-						.setId(resultSet.getInt("id"))
-						.setName(resultSet.getString("name"))
-						.setIntroduced(resultSet
-											.getTimestamp("introduced")==null?
-											null:resultSet.getTimestamp("introduced")
-											.toLocalDateTime())
-						.setDiscontinued(resultSet
-										.getTimestamp("discontinued")==null?
-										null:resultSet.getTimestamp("discontinued")
-										.toLocalDateTime())
-						.setCompany(new Company.CompanyBuilder()
-										.idCompany(resultSet.getInt("company_id"))
-										.nameCompany(null)
-										.build())
-						.build();
-
-
+				computer = resultsetToComputer(resultSet);
 			}
-			
+				
 			LOGGER.info("success get computer by id : " + id);
 		} catch (SQLException e) {
 			e.printStackTrace();

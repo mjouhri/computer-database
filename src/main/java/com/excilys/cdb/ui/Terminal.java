@@ -47,6 +47,7 @@ public class Terminal {
 					System.out.println("5 - Update a computer");
 					System.out.println("6 - Delete a computer");
 					System.out.println("7 - Detailed information of one company");
+					System.out.println("8 - Get Page");
 					System.out.println("0 - Exit");
 					System.out.print("Your choice : ");
 					
@@ -112,7 +113,7 @@ public class Terminal {
 								.build()
 
 						);
-						break;
+						break; 
 					case 6:
 						System.out.print("Computer id : ");
 						scanner = new Scanner(System.in);
@@ -128,6 +129,19 @@ public class Terminal {
 						System.out.println(companyService.findCompanyById(intScanner));
 						
 						break;
+					
+					case 8:
+						System.out.print("Computer id : ");
+						scanner = new Scanner(System.in);
+						intScanner = scanner.nextInt();
+						
+						for (Computer computer : computerService.getPage(intScanner, 20)) {
+							System.out.println(computer);
+						}
+						
+						break;
+					
+						
 					}
 			}while(x!=0);
 					
