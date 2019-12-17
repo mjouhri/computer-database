@@ -21,12 +21,12 @@ public class CompanyDAO {
 	
 	private static final String FIND_ONE_COMPANY = "select id ,name "
 										    		+ "from company "
-										    		+ "where id = ? " ;
+										    	 	+ "where id = ? " ;
 	
 	private static final String FIND_ALL_COMPANYS = "select id, name"
     												+ " from company;";
 	
-	
+	 
 	private static CompanyDAO INSTANCE = null;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
@@ -42,12 +42,12 @@ public class CompanyDAO {
 		 
 	}
 	
-	public CompanyDAO(MySQLAccess mySQLAccess) {
+	public CompanyDAO(DatabaseConnection mySQLAccess) {
 		super();
 	}
 	
 	public Optional<Company> getCompanyById(int id) {
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		Company company = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
@@ -75,7 +75,7 @@ public class CompanyDAO {
 	
 	public List<Company> getListCompany() {
 		
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		
 		List<Company> list = new ArrayList<Company>();
 		

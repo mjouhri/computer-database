@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.ui.Terminal;
 
-public class MySQLAccess {
+public class DatabaseConnection {
 	private final static String url = "jdbc:mysql://localhost:3306/computer-database-db?autoReconnect=true&useSSL=false";
 	 
 	private final static String user = "admincdb";
@@ -17,19 +17,19 @@ public class MySQLAccess {
 	    
     private Connection connect = null;
     
-    private static MySQLAccess INSTANCE = null;
+    private static DatabaseConnection INSTANCE = null;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Terminal.class);	
     
    
      
-    private MySQLAccess() {
+    private DatabaseConnection() {
 		 
 	}
     
-    public static MySQLAccess getInstance() {
+    public static DatabaseConnection getInstance() {
     	if (INSTANCE == null) {
-    		INSTANCE = new MySQLAccess(); 
+    		INSTANCE = new DatabaseConnection(); 
     	}
   
         return INSTANCE; 

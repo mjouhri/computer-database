@@ -10,9 +10,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
-<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="css/main.css" rel="stylesheet" media="screen">
+<link href="css/main.css" rel="stylesheet" media="screen"> -->
+
+<style><%@ include file ="../css/main.css"%></style>
+<style><%@ include file ="../css/font-awesome.css"%></style>
+<style><%@ include file ="../css/bootstrap.min.css"%></style>
 
 </head>
 <body>
@@ -81,7 +85,22 @@
                 </thead>
                 <!-- Browse attribute computers -->
                 <tbody id="results">
-                    <tr>
+                
+                <c:forEach items="${computers}" var="computer">
+				    <tr>      
+				        <td class="editMode">
+                            <input type="checkbox" name="cb" class="cb" value="1111">
+                        </td>
+                        <td>
+                            <a href="editComputer.html" onclick="">${computer.getName()}</a>
+                        </td>
+                        <td>${computer.getIntroduced()}</td>
+                        <td>${computer.getDiscontinued()}</td>
+                        <td>Apple Inc.</td>
+				    </tr>
+				</c:forEach>
+                
+<!--                     <tr>
                         <td class="editMode">
                             <input type="checkbox" name="cb" class="cb" value="0">
                         </td>
@@ -104,8 +123,8 @@
                         <td></td>
                         <td>Thinking Machines</td>
 
-                    </tr>
-                    <tr>
+                    </tr> -->
+ <!--                    <tr>
                         <td class="editMode">
                             <input type="checkbox" name="cb" class="cb" value="0">
                         </td>
@@ -224,7 +243,7 @@
                         <td></td>
                         <td>Nintendo</td>
 
-                    </tr>
+                    </tr> -->
                     
                 </tbody>
             </table>
@@ -233,22 +252,44 @@
 
     <footer class="navbar-fixed-bottom">
         <div class="container text-center">
-            <ul class="pagination">
-                <li>
-                    <a href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                  </a>
-              </li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-              <li>
-                <a href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
+        
+        
+        
+        <ul>
+        	
+      <%--   	 <form action="ServletMain" method="post">
+        	 <li><a href="ServletMain" > 0</a></li>
+			    <input type="text" name="username">
+			    <input type="password" name="password">
+			    <input type="submit" value="login">
+			    <span class="error">${error}</span>
+			</form>  --%>
+			 
+        </ul>
+        
+             <ul class="pagination">
+            <!--  <form action="ServletMain" method="POST"> -->
+             	<li>
+             		<form method="POST" action="ServletMain">
+             			<button name = "page" value="1" type="submit"> 1</button>
+             			<button name = "page" value="2" type="submit"> 2</button>
+             			<button name = "page" value="3" type="submit"> 3</button>
+             			<button name = "page" value="4" type="submit"> 4</button>
+             			<button name = "page" value="suivant" type="submit"> &raquo;</button>
+             		</form>
+             	</li>
+	   <!--          <li><form method="POST" action="ServletMain"><button name = "username" value="2" type="submit"> 2</button></form></li>
+	              <li><a href="#">1</a></li>
+	              <li><a href="#">2</a></li>
+	              <li><a href="#">3</a></li>
+	              <li><a href="#">4</a></li>
+	              <li><a href="#">5</a></li>
+	              <li>
+	                <a href="#" aria-label="Next">
+	                    <span aria-hidden="true">&raquo;</span>
+	                </a>
+	            </li> -->
+
         </ul>
 	</div>
         <div class="btn-group btn-group-sm pull-right" role="group" >

@@ -11,7 +11,7 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.CompanyDAO;
 import com.excilys.cdb.persistence.ComputerDAO;
-import com.excilys.cdb.persistence.MySQLAccess;
+import com.excilys.cdb.persistence.DatabaseConnection;
 import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
@@ -28,7 +28,7 @@ public class Terminal {
 
 		LOGGER.info("Start ...");
 		
-		MySQLAccess connectionDatabase = MySQLAccess.getInstance();
+		DatabaseConnection connectionDatabase = DatabaseConnection.getInstance();
 		ComputerService computerService = new ComputerService(new ComputerDAO(connectionDatabase));
 		CompanyService companyService = new CompanyService(new CompanyDAO(connectionDatabase));
 

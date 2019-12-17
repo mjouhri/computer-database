@@ -53,7 +53,7 @@ public class ComputerDAO {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 
 	
-	private ComputerDAO() {
+	private ComputerDAO() { 
 	}
 	
 	public static ComputerDAO getInstance() {
@@ -63,13 +63,13 @@ public class ComputerDAO {
 		return INSTANCE;
 	}
 
-	public ComputerDAO(MySQLAccess mySQLAccess) {
+	public ComputerDAO(DatabaseConnection mySQLAccess) {
 		super();
 	}
 	
 	public List<Computer> getListComputer() {
 		
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		
 		List<Computer> list = new ArrayList<Computer>();
 		
@@ -101,7 +101,7 @@ public class ComputerDAO {
 
 	public List<Computer> getPage(int page, int length) {
 		
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		
 		List<Computer> list = new ArrayList<Computer>();
 		
@@ -178,12 +178,12 @@ public class ComputerDAO {
 			e2.printStackTrace();
 			LOGGER.info("failed : closing database");
 		}
-	}
+	} 
 	
 	
 	public Optional<Computer> getComputerById(int id) {
 		
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		Computer computer = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
@@ -209,7 +209,7 @@ public class ComputerDAO {
 	}
 	
 	public boolean newComputer(Computer computer) {
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 
 		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
@@ -236,7 +236,7 @@ public class ComputerDAO {
 	}
 	
 	public void updateComputer(Computer computer) {
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
 			  preparedStmt.setString (1, computer.getName());
 		      preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
@@ -259,7 +259,7 @@ public class ComputerDAO {
 	}
 	
 	public void deleteComputer(int id) {
-		Connection connect = MySQLAccess.getInstance().getConnect();
+		Connection connect = DatabaseConnection.getInstance().getConnect();
 			try (PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
 			      preparedStmt.execute();
