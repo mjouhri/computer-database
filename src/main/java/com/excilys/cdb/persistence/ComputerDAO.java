@@ -51,7 +51,7 @@ public class ComputerDAO {
 	public static ComputerDAO INSTANCE = null;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
-
+ 
 	
 	private ComputerDAO() { 
 	}
@@ -69,11 +69,11 @@ public class ComputerDAO {
 	
 	public List<Computer> getListComputer() {
 		
-		Connection connect = DatabaseConnection.getInstance().getConnect();
-		
 		List<Computer> list = new ArrayList<Computer>();
 		
-		try(PreparedStatement preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS);
+		try(
+				Connection connect = DatabaseConnection.getInstance().getConnect();
+				PreparedStatement preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS);
 				ResultSet resultSet = preparedStmt.executeQuery();) {
 			
 		      while (resultSet.next())
@@ -91,21 +91,18 @@ public class ComputerDAO {
 			LOGGER.info("failed get list computers ");
 			e.printStackTrace();
 		}
-		finally {
-			closeConnexion(connect);
-		}
+
 
 		return list;
 	}
 	 
 	
 public int getNbComputers() {
-		
-		Connection connect = DatabaseConnection.getInstance().getConnect();
-		
+
 		int count = 0;
 		
-		try{
+		try(Connection connect = DatabaseConnection.getInstance().getConnect();)
+		{
 			
 			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
 			ResultSet resultSet = preparedStmt.executeQuery();
@@ -122,20 +119,16 @@ public int getNbComputers() {
 			LOGGER.info("failed get list computers ");
 			e.printStackTrace();
 		}
-		finally {
-			closeConnexion(connect);
-		}
 
 		return count;
 	}
 
 	public List<Computer> getPage(int page, int length) {
-		
-		Connection connect = DatabaseConnection.getInstance().getConnect();
-		
+
 		List<Computer> list = new ArrayList<Computer>();
 		
-		try{
+		try(Connection connect = DatabaseConnection.getInstance().getConnect();)
+		{
 			
 			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
 			ResultSet resultSet = preparedStmt.executeQuery();
@@ -170,9 +163,6 @@ public int getNbComputers() {
 		} catch (SQLException e) {
 			LOGGER.info("failed get list computers ");
 			e.printStackTrace();
-		}
-		finally {
-			closeConnexion(connect);
 		}
 
 		return list;
@@ -243,8 +233,12 @@ public int getNbComputers() {
 
 		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
-			     preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
-			     preparedStmt.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
+			     
+			     preparedStmt.setTimestamp(2, computer.
+			    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
+			    		 );
+			     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued())
+			    		 );
 			     if ( computer.getCompany() !=null ) {
 			    	 	preparedStmt.setInt(4, computer.getCompany().getIdCompany());
 			    	 }
@@ -269,8 +263,11 @@ public int getNbComputers() {
 		Connection connect = DatabaseConnection.getInstance().getConnect();
 		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
 			  preparedStmt.setString (1, computer.getName());
-		      preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
-		      preparedStmt.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
+			  preparedStmt.setTimestamp(2, computer.
+		    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
+		    		 );
+		     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued())
+		    		 );
 		      if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getCompany().getIdCompany());
 		      else preparedStmt.setString(4, null);
 		      preparedStmt.setInt   (5, computer.getId());

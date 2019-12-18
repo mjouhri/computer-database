@@ -16,9 +16,9 @@ import com.excilys.cdb.service.CompanyService;
 import com.excilys.cdb.service.ComputerService;
 
 
-public class Terminal {
+public class Main {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Terminal.class);	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);	
 
 	public static void main(String[] args) {
 		

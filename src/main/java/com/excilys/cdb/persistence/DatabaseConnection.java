@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.ui.Terminal;
+import com.excilys.cdb.ui.Main;
 
 public class DatabaseConnection {
 	private final static String url = "jdbc:mysql://localhost:3306/computer-database-db?autoReconnect=true&useSSL=false";
@@ -19,7 +19,7 @@ public class DatabaseConnection {
     
     private static DatabaseConnection INSTANCE = null;
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(Terminal.class);	
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);	
     
    
      

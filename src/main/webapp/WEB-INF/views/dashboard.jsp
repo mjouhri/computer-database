@@ -9,10 +9,6 @@
 <title>Computer Database</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
-<!-- Bootstrap -->
-<!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="css/font-awesome.css" rel="stylesheet" media="screen">
-<link href="css/main.css" rel="stylesheet" media="screen"> -->
 
 <style><%@ include file ="../css/main.css"%></style>
 <style><%@ include file ="../css/font-awesome.css"%></style>
@@ -41,7 +37,7 @@
                     </form>
                 </div>
                 <div class="pull-right">
-                    <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> 
+                    <a class="btn btn-success" id="addComputer" href="http://localhost:8080/cdb_project/addcomputer">Add Computer</a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
                 </div>
             </div>
@@ -96,7 +92,7 @@
                         </td>
                         <td>${computer.getIntroduced()}</td>
                         <td>${computer.getDiscontinued()}</td>
-                        <td>Apple Inc.</td>
+                        <td>${computer.getCompany().getNameCompany()}</td>
 				    </tr>
 				</c:forEach>
                 

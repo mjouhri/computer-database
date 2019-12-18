@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Company;
 
-public class CompanyDaoTest {
+public class CompanyDaoTest { 
 	
 	private CompanyDAO companyDao = CompanyDAO.getInstance();
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDaoTest.class);	

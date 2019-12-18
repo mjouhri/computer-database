@@ -1,6 +1,9 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import com.excilys.cdb.mapper.Mapper;
 
 public class Computer {
 	
@@ -9,7 +12,7 @@ public class Computer {
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
 	private Company company;
-
+ 
 	 
 	public Computer() {
 
@@ -137,10 +140,28 @@ public class Computer {
 			this.introduced = introduced;
 			return this;
 		}
+		
+		public ComputerBuilder setIntroduced(String introduced) {
+			
+			Mapper.StringToLocalDateTime(introduced);
+	
+			
+			return this;
+		}
+
+		
+		
 		public ComputerBuilder setDiscontinued(LocalDateTime discontinued) {
 			this.discontinued = discontinued;
 			return this;
 		}
+		
+		public ComputerBuilder setDiscontinued(String discontinued) {
+			
+			Mapper.StringToLocalDateTime(discontinued);
+			
+			return this;
+		} 
 		public ComputerBuilder setCompany(Company company) {
 			this.company = company;
 			return this;

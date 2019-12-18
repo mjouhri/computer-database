@@ -4,13 +4,22 @@
 
 
 	<servlet>
-		<servlet-name>ServletMain</servlet-name>
-		<servlet-class>com.excilys.cdb.ui.ServletMain</servlet-class>
+		<servlet-name>ListComputersServlet</servlet-name>
+		<servlet-class>com.excilys.cdb.servlet.ListComputersServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>AddComputerServlet</servlet-name>
+		<servlet-class>com.excilys.cdb.servlet.AddComputerServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>ServletMain</servlet-name>
+		<servlet-name>ListComputersServlet</servlet-name>
 		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AddComputerServlet</servlet-name>
+		<url-pattern>/addcomputer</url-pattern>
 	</servlet-mapping>
 	
 </web-app>

@@ -1,4 +1,4 @@
-package com.excilys.cdb.ui;
+package com.excilys.cdb.servlet;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,32 +13,32 @@ import com.excilys.cdb.service.ComputerService;
 
 
 
-public class ServletMain extends HttpServlet {
+public class ListComputersServlet extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ComputerService computerService = ComputerService.getInstance();
-	int page = 1;
-	int nbComputers = 0;
-	int sizePage = 20;
-	int nbPages = 0;
-	
-	List<Computer> listComputer ;
+	private int page = 1;
+	private int nbComputers = 0;
+	private int sizePage = 20;
+	private int nbPages = 0;
+	private List<Computer> listComputer;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		listComputer = computerService.getPage(page, sizePage);
-		nbComputers = computerService.getNbComputers();
-		nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
-		request.setAttribute("nbComputers", nbComputers);
-		request.setAttribute("computers", listComputer);
-		request.setAttribute("nbPages", nbPages);
-		request.setAttribute("page", page);
+		System.out.println("ListComputersServlet : doGet ... ");
 
+		data(request);
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		System.out.println("ListComputersServlet : doPost... ");
+
 		
 		String getpage  = request.getParameter("page"); 
 		page = Integer.parseInt(getpage);
@@ -46,6 +46,14 @@ public class ServletMain extends HttpServlet {
 		page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
 		
 		
+		data(request);
+		
+		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
+
+
+	}
+
+	private void data(HttpServletRequest request) {
 		listComputer = computerService.getPage(page, sizePage);
 		nbComputers = computerService.getNbComputers();
 		nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
@@ -53,10 +61,6 @@ public class ServletMain extends HttpServlet {
 		request.setAttribute("computers", listComputer);
 		request.setAttribute("nbPages", nbPages);
 		request.setAttribute("page", page);
-		
-		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
-
-
 	}
 
 }
