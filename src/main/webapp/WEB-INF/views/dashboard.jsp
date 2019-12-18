@@ -29,7 +29,7 @@
     <section id="main">
         <div class="container">
             <h1 id="homeTitle">
-                121 Computers found
+                 <c:out value="${nbComputers}" /> Computers found
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
@@ -253,42 +253,23 @@
     <footer class="navbar-fixed-bottom">
         <div class="container text-center">
         
-        
-        
-        <ul>
-        	
-      <%--   	 <form action="ServletMain" method="post">
-        	 <li><a href="ServletMain" > 0</a></li>
-			    <input type="text" name="username">
-			    <input type="password" name="password">
-			    <input type="submit" value="login">
-			    <span class="error">${error}</span>
-			</form>  --%>
-			 
-        </ul>
-        
              <ul class="pagination">
             <!--  <form action="ServletMain" method="POST"> -->
              	<li>
              		<form method="POST" action="ServletMain">
+             		<button name = "page" value="${page - 1}" type="submit"> &laquo;</button>
              			<button name = "page" value="1" type="submit"> 1</button>
              			<button name = "page" value="2" type="submit"> 2</button>
              			<button name = "page" value="3" type="submit"> 3</button>
              			<button name = "page" value="4" type="submit"> 4</button>
-             			<button name = "page" value="suivant" type="submit"> &raquo;</button>
+             			
+             			<c:forEach var="i" begin="5" end="${nbPages}" step="1">
+             				<button name = "page" value="${ i }" type="submit"> ${ i }</button>
+             			</c:forEach>
+             			
+             			<button name = "page" value="${page + 1}" type="submit"> &raquo;</button>
              		</form>
              	</li>
-	   <!--          <li><form method="POST" action="ServletMain"><button name = "username" value="2" type="submit"> 2</button></form></li>
-	              <li><a href="#">1</a></li>
-	              <li><a href="#">2</a></li>
-	              <li><a href="#">3</a></li>
-	              <li><a href="#">4</a></li>
-	              <li><a href="#">5</a></li>
-	              <li>
-	                <a href="#" aria-label="Next">
-	                    <span aria-hidden="true">&raquo;</span>
-	                </a>
-	            </li> -->
 
         </ul>
 	</div>

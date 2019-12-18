@@ -48,5 +48,9 @@ public class ComputerService {
 	public List<Computer>  getPage(int page, int length) {
 		return computerDAO.getPage(page, length);
 	} 
+	
+	public int getNbComputers() {
+		return computerDAO.getNbComputers();
+	}
 
 }

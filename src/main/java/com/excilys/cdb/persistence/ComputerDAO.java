@@ -97,7 +97,37 @@ public class ComputerDAO {
 
 		return list;
 	}
+	 
 	
+public int getNbComputers() {
+		
+		Connection connect = DatabaseConnection.getInstance().getConnect();
+		
+		int count = 0;
+		
+		try{
+			
+			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
+			ResultSet resultSet = preparedStmt.executeQuery();
+		
+			if(resultSet.next()) {
+				
+				count = resultSet.getInt("nb");
+				
+				LOGGER.info("Size computer table : " + count );
+				
+			}
+		      
+		} catch (SQLException e) {
+			LOGGER.info("failed get list computers ");
+			e.printStackTrace();
+		}
+		finally {
+			closeConnexion(connect);
+		}
+
+		return count;
+	}
 
 	public List<Computer> getPage(int page, int length) {
 		
@@ -119,7 +149,7 @@ public class ComputerDAO {
 				preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS 
 						+  FIND_PAGE);
 				
-				int startPage = (count / length) * (page - 1);
+				int startPage = (length) * (page - 1);
 				
 				preparedStmt.setInt(1, startPage);
 				preparedStmt.setInt(2, length);

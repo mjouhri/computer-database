@@ -17,13 +17,21 @@ public class ServletMain extends HttpServlet {
 
 	private ComputerService computerService = ComputerService.getInstance();
 	int page = 1;
+	int nbComputers = 0;
+	int sizePage = 20;
+	int nbPages = 0;
+	
 	List<Computer> listComputer ;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		listComputer = computerService.getPage(page, 20);
+		listComputer = computerService.getPage(page, sizePage);
+		nbComputers = computerService.getNbComputers();
+		nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
+		request.setAttribute("nbComputers", nbComputers);
 		request.setAttribute("computers", listComputer);
-		System.out.println("goGet");
+		request.setAttribute("nbPages", nbPages);
+		request.setAttribute("page", page);
 
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 	}
@@ -31,20 +39,21 @@ public class ServletMain extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("doPost");
 		
-		int nbPagae=1;
-		String page  = request.getParameter("page");
+		String getpage  = request.getParameter("page"); 
+		page = Integer.parseInt(getpage);
+		page = page <= 0 ? 1: page;
+		page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
 		
-		if(page.equals("next"))  nbPagae++;
-		else if(page.equals("back"))  nbPagae--;
-		else {
-			nbPagae = Integer.parseInt(page);
-		}
-
-		 
-		listComputer = computerService.getPage(nbPagae, 20);
+		
+		listComputer = computerService.getPage(page, sizePage);
+		nbComputers = computerService.getNbComputers();
+		nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
+		request.setAttribute("nbComputers", nbComputers);
 		request.setAttribute("computers", listComputer);
+		request.setAttribute("nbPages", nbPages);
+		request.setAttribute("page", page);
+		
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 
 
