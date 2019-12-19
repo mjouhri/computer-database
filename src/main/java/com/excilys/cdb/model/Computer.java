@@ -144,13 +144,11 @@ public class Computer {
 		public ComputerBuilder setIntroduced(String introduced) {
 			
 			Mapper.StringToLocalDateTime(introduced);
-	
-			
+		
 			return this;
 		}
 
-		
-		
+
 		public ComputerBuilder setDiscontinued(LocalDateTime discontinued) {
 			this.discontinued = discontinued;
 			return this;

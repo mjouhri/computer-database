@@ -5,29 +5,21 @@ import java.time.LocalDateTime;
 public class Validator {
 	
 	public static boolean validateName(String name) {
-		if( name != null
-				&& !name.isEmpty()
-				&& name.length() > 2
-				)
-			return true;
-		return false;
+		return name != null && !name.isEmpty() && name.length() > 2 ? true : false;
 	}
-
 	
 	public static boolean validateDate(LocalDateTime introduced, LocalDateTime discontinued) {
 		
-		if(
-				( introduced.getYear() < discontinued.getYear()
-				&& introduced.getMonthValue() < discontinued.getMonthValue()
-				&& introduced.getDayOfYear() <  introduced.getDayOfYear()
-
-					)
-					&& introduced.getYear() > 1975
-					&& discontinued.getYear() > 1975) {
-			return true;
-		}
-		
-		return false;
+		if(isvalidDate(introduced) && !isvalidDate(discontinued)) return true;
+		else if(isvalidDate(introduced) 
+				&& isvalidDate(discontinued)
+				&& introduced.isBefore(discontinued)) return true;
+		else return false;
+	
 	}
-
+		
+	public static boolean isvalidDate(LocalDateTime date) {
+			return date != null && date.getYear() > 1970 ? true : false;
+	}
+			
 }
