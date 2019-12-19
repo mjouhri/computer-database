@@ -1,7 +1,6 @@
 package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.excilys.cdb.mapper.Mapper;
 

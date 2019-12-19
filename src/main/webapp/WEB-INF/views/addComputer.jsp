@@ -34,7 +34,7 @@ var validator = $("#addForm").validate({
                },
                "discontinued":{
              	  "date": true,
-                }
+                } 
           }
           });
           

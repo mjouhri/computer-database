@@ -1,7 +1,6 @@
 package com.excilys.cdb.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.ComputerDAO;

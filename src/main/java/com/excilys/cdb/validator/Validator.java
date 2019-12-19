@@ -2,7 +2,7 @@ package com.excilys.cdb.validator;
 
 import java.time.LocalDateTime;
 
-public class Validator {
+public class Validator { // retorner des exceptions
 	
 	public static boolean validateName(String name) {
 		return name != null && !name.isEmpty() && name.length() > 2 ? true : false;
@@ -11,7 +11,7 @@ public class Validator {
 	public static boolean validateDate(LocalDateTime introduced, LocalDateTime discontinued) {
 		
 		if(isvalidDate(introduced) && !isvalidDate(discontinued)) return true;
-		else if(isvalidDate(introduced) 
+		else if(isvalidDate(introduced)
 				&& isvalidDate(discontinued)
 				&& introduced.isBefore(discontinued)) return true;
 		else return false;
