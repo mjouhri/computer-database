@@ -2,13 +2,22 @@ package com.excilys.cdb.validator;
 
 import java.time.LocalDateTime;
 
-public class Validator { // retorner des exceptions
+import com.excilys.cdb.mapper.Mapper;
+
+public class Validator { // retourner des exceptions
 	
-	public static boolean validateName(String name) {
+	private static boolean validateName(String name) {
 		return name != null && !name.isEmpty() && name.length() > 2 ? true : false;
 	}
 	
-	public static boolean validateDate(LocalDateTime introduced, LocalDateTime discontinued) {
+	public static boolean ValidateAddComputer( String name, String introduced, String discontinued) {
+		if (validateDate(Mapper.StringToLocalDateTime(introduced),
+				Mapper.StringToLocalDateTime(discontinued)) 
+				&& validateName(name)) return true;
+		else return false;
+	}
+	
+	private static boolean validateDate(LocalDateTime introduced, LocalDateTime discontinued) {
 		
 		if(isvalidDate(introduced) && !isvalidDate(discontinued)) return true;
 		else if(isvalidDate(introduced)
@@ -18,7 +27,7 @@ public class Validator { // retorner des exceptions
 	
 	}
 		
-	public static boolean isvalidDate(LocalDateTime date) {
+	private static boolean isvalidDate(LocalDateTime date) {
 			return date != null && date.getYear() > 1970 ? true : false;
 	}
 			

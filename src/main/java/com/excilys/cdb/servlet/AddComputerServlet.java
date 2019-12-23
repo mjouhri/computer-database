@@ -40,13 +40,11 @@ public class AddComputerServlet extends HttpServlet{
 		System.out.println("AddComputerServlet : doPost... ");
 		
 		String computerName   = request.getParameter("computerName"); 
-		String introduced   = request.getParameter("introduced"); 
+		String introduced   = request.getParameter("introduced");
 		String discontinued   = request.getParameter("discontinued"); 
 		int companyId  = Integer.parseInt(request.getParameter("companyId"));
 		
-		if(Validator.validateName(computerName)
-	//			&& Validator.validateDate(introduced, discontinued)
-				) {
+		if(Validator.ValidateAddComputer(computerName, introduced, discontinued)) {
 			computerService.newComputer(
 					
 					new Computer.ComputerBuilder()
