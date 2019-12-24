@@ -29,9 +29,8 @@
             </h1>
             <div id="actions" class="form-horizontal">
                 <div class="pull-left">
-                    <form id="searchForm" action="#" method="GET" class="form-inline">
-
-                        <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" />
+                    <form id="searchForm" action="ServletMain" method="GET" class="form-inline">
+                        <input type="search" id="searchbox" name="name" class="form-control" placeholder="Search name" />
                         <input type="submit" id="searchsubmit" value="Filter by name"
                         class="btn btn-primary" />
                     </form>
@@ -250,32 +249,29 @@
         <div class="container text-center">
         
              <ul class="pagination">
-            <!--  <form action="ServletMain" method="POST"> -->
              	<li>
-             		<form method="POST" action="ServletMain">
-             		<button name = "page" value="${page - 1}" type="submit"> &laquo;</button>
-             			<button name = "page" value="1" type="submit"> 1</button>
-             			<button name = "page" value="2" type="submit"> 2</button>
-             			<button name = "page" value="3" type="submit"> 3</button>
-             			<button name = "page" value="4" type="submit"> 4</button>
-             			
-             			<c:forEach var="i" begin="5" end="${nbPages}" step="1">
+             		<form method="GET" action="ServletMain">
+             		
+             			<button name = "page" value="${page - 1}" type="submit"> &laquo;</button>
+             			<c:forEach var="i" begin="1" end="${nbPages}" step="1">
              				<button name = "page" value="${ i }" type="submit"> ${ i }</button>
              			</c:forEach>
-             			
              			<button name = "page" value="${page + 1}" type="submit"> &raquo;</button>
-             		</form>
+             			
+             			<button class="btn btn-default" name = "nbPages" value="10" type="submit" >10</button>
+			            <button class="btn btn-default" name = "nbPages"  value="50" type="submit" >50</button>
+			            <button class="btn btn-default" name = "nbPages"  value="100" type="submit" >100</button>            			 
+             		</form>            	       
              	</li>
 
         </ul>
 	</div>
         <div class="btn-group btn-group-sm pull-right" role="group" >
-            <button type="button" class="btn btn-default">10</button>
-            <button type="button" class="btn btn-default">50</button>
-            <button type="button" class="btn btn-default">100</button>
+
         </div>
 
     </footer>
+    
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/dashboard.js"></script>

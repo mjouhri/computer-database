@@ -44,6 +44,12 @@ public class ComputerDAO {
 	private static final String FIND_PAGE = " LIMIT ?, ?";
 	
 	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
+	
+	private static final String FIND_COMPUTER_BY_NAME = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+    		+ " ct.company_id, company.id, company.name as company_name"
+    		+ " from computer ct"
+    		+ " LEFT JOIN company ON ct.company_id = company.id"
+	    	+ " where ct.name like ? ";
 
 	
 	public static ComputerDAO INSTANCE = null;
@@ -299,6 +305,40 @@ public int getNbComputers() {
 			}
 			
 		}
+	
+	public List<Computer> getComputersByName(String name, int page, int length){
+		
+		List<Computer> list = new ArrayList<Computer>();
+		
+		try(
+				Connection connect = DatabaseConnection.getInstance().getConnect();
+				PreparedStatement preparedStmt = connect.prepareStatement(FIND_COMPUTER_BY_NAME);
+				) {
+			preparedStmt.setString (1, name);
+			ResultSet resultSet = preparedStmt.executeQuery();
+			
+		      while (resultSet.next())
+		      {
+		        
+		    	  Computer c = resultsetToComputer(resultSet);
+		        		 		 		     
+		        list.add(c);   
+		      }
+		      
+		      resultSet.close();
+		      
+			LOGGER.info("success get list computers by name ");
+
+		      
+		} catch (SQLException e) {
+			LOGGER.info("failed get list computers by name :" + e.getMessage());
+		}
+
+
+		return list;
+		
+		
+	}
 	
 
 }

@@ -15,22 +15,60 @@ import com.excilys.cdb.service.ComputerService;
 
 public class ListComputersServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ComputerService computerService = ComputerService.getInstance();
 	private int page = 1;
 	private int nbComputers = 0;
-	private int sizePage = 20;
+	private int sizePage = 10;
 	private int nbPages = 0;
 	private List<Computer> listComputer;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		System.out.println("ListComputersServlet : doGet ... ");
-
-		data(request);
+		
+		String getpage  = request.getParameter("page");
+		String sizePageString  = request.getParameter("nbPages");
+		String nameSearsh  = request.getParameter("name");
+		
+		System.out.println("page : " + getpage);
+		System.out.println("Size page : " + sizePageString);
+		System.out.println("name searshed : " + nameSearsh);
+		
+		if(getpage!=null && !getpage.isEmpty()) {
+			
+			page = Integer.parseInt(getpage);
+			
+			page = page <= 0 ? 1: page;
+			page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
+			listComputer = computerService.getPage(page, sizePage);
+		}
+		
+		else if(sizePageString != null && !sizePageString.isEmpty()) {
+			sizePage  = Integer.parseInt(sizePageString);
+			nbComputers = computerService.getNbComputers();
+			nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
+			listComputer = computerService.getPage(page, sizePage);
+		}
+		
+		else if(nameSearsh != null && !nameSearsh.isEmpty()) {		
+			//listComputer = computerService.getComputersByName(nameSearsh, );
+		}
+		else {
+			
+			nbComputers = computerService.getNbComputers();
+			nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
+			listComputer = computerService.getPage(page, sizePage);
+		}
+		
+		
+		
+		
+		request.setAttribute("nbComputers", nbComputers);
+		request.setAttribute("computers", listComputer);
+		request.setAttribute("nbPages", nbPages);
+		request.setAttribute("page", page);
+		
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 	}
 	
@@ -40,10 +78,34 @@ public class ListComputersServlet extends HttpServlet {
 		System.out.println("ListComputersServlet : doPost... ");
 
 		
-		String getpage  = request.getParameter("page"); 
-		page = Integer.parseInt(getpage);
-		page = page <= 0 ? 1: page;
-		page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
+//		String getpage  = request.getParameter("page");
+//		String sizePageString  = request.getParameter("nbPages");
+//		String nameSearsh  = request.getParameter("name");
+//		
+//		System.out.println("page : " + getpage);
+//		System.out.println("Size page : " + sizePageString);
+//		System.out.println("name searshed : " + nameSearsh);
+//		
+//		if(getpage!=null && !getpage.isEmpty()) {
+//			
+//			page = Integer.parseInt(getpage);
+//			
+//			page = page <= 0 ? 1: page;
+//			page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
+//		}
+//		
+//		if(sizePageString != null && !sizePageString.isEmpty()) {
+//			sizePage  = Integer.parseInt(sizePageString);
+//		}
+//		
+//		
+//		if(nameSearsh != null && !nameSearsh.isEmpty()) {
+//			
+//			
+//			
+//		}
+		//if(nameSearsh != null && !nameSearsh.isEmpty())
+		
 		
 		
 		data(request);
@@ -54,13 +116,7 @@ public class ListComputersServlet extends HttpServlet {
 	}
 
 	private void data(HttpServletRequest request) {
-		listComputer = computerService.getPage(page, sizePage);
-		nbComputers = computerService.getNbComputers();
-		nbPages  = (int) Math.ceil((nbComputers/(double)sizePage));
-		request.setAttribute("nbComputers", nbComputers);
-		request.setAttribute("computers", listComputer);
-		request.setAttribute("nbPages", nbPages);
-		request.setAttribute("page", page);
+		
 	}
 
 }
