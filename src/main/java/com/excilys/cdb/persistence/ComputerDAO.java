@@ -306,15 +306,16 @@ public int getNbComputers() {
 			
 		}
 	
-	public List<Computer> getComputersByName(String name, int page, int length){
+	public List<Computer> getComputersByName(String name){
 		
 		List<Computer> list = new ArrayList<Computer>();
 		
 		try(
 				Connection connect = DatabaseConnection.getInstance().getConnect();
 				PreparedStatement preparedStmt = connect.prepareStatement(FIND_COMPUTER_BY_NAME);
+				
 				) {
-			preparedStmt.setString (1, name);
+			preparedStmt.setString (1, "%" + name+ "%");
 			ResultSet resultSet = preparedStmt.executeQuery();
 			
 		      while (resultSet.next())
@@ -333,7 +334,6 @@ public int getNbComputers() {
 		} catch (SQLException e) {
 			LOGGER.info("failed get list computers by name :" + e.getMessage());
 		}
-
 
 		return list;
 		

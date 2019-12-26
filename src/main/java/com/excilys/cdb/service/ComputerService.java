@@ -52,8 +52,8 @@ public class ComputerService {
 		return computerDAO.getNbComputers();
 	}
 	
-	public List<Computer>  getComputersByName(String name, int page, int length) {
-		return computerDAO.getComputersByName(name, page, length);
+	public List<Computer>  getComputersByName(String name) {
+		return computerDAO.getComputersByName(name);
 	} 
 
 }

@@ -11,8 +11,11 @@
 <meta charset="utf-8">
 
 <style><%@ include file ="../css/main.css"%></style>
-<style><%@ include file ="../css/font-awesome.css"%></style>
 <style><%@ include file ="../css/bootstrap.min.css"%></style>
+ <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" media="screen">
+
+
+
 
 </head>
 <body>
@@ -272,9 +275,17 @@
 
     </footer>
     
-<script src="../js/jquery.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
-<script src="../js/dashboard.js"></script>
+<!-- <script type="text/javascript" src="https://github.com/excilys/training-java/blob/master/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://github.com/excilys/training-java/blob/master/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://github.com/excilys/training-java/blob/master/static/js/bootstrap.js"></script> -->
+   
+<!-- <script  src="../js/jquery.min.js"></script>
+<script  src="WEB-INF/js/bootstrap.min.js"></script>
+<script  src="WEB-INF/js/dashboard.js"></script> -->
+
+<script><%@ include file ="../js/jquery.min.js"%></script>
+<script><%@ include file ="../js/bootstrap.min.js"%></script>
+<script><%@ include file ="../js/dashboard.js"%></script>
 
 </body>
 </html>

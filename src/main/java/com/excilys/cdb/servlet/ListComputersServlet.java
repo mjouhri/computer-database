@@ -8,14 +8,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
+import com.excilys.cdb.ui.Main;
 
 
 
 public class ListComputersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ListComputersServlet.class);	
+
 	private ComputerService computerService = ComputerService.getInstance();
 	private int page = 1;
 	private int nbComputers = 0;
@@ -24,6 +31,8 @@ public class ListComputersServlet extends HttpServlet {
 	private List<Computer> listComputer;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		BasicConfigurator.configure();
 	
 		System.out.println("ListComputersServlet : doGet ... ");
 		
@@ -52,7 +61,8 @@ public class ListComputersServlet extends HttpServlet {
 		}
 		
 		else if(nameSearsh != null && !nameSearsh.isEmpty()) {		
-			//listComputer = computerService.getComputersByName(nameSearsh, );
+			listComputer = computerService.getComputersByName(nameSearsh);
+			LOGGER.info("FindByNameSize : " + listComputer.size());
 		}
 		else {
 			
