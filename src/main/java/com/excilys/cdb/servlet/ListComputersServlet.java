@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
-import com.excilys.cdb.ui.Main;
-
 
 
 public class ListComputersServlet extends HttpServlet {
@@ -39,10 +37,8 @@ public class ListComputersServlet extends HttpServlet {
 		String getpage  = request.getParameter("page");
 		String sizePageString  = request.getParameter("nbPages");
 		String nameSearsh  = request.getParameter("name");
+		String orderBy  = request.getParameter("orderBy");
 		
-		System.out.println("page : " + getpage);
-		System.out.println("Size page : " + sizePageString);
-		System.out.println("name searshed : " + nameSearsh);
 		
 		if(getpage!=null && !getpage.isEmpty()) {
 			
@@ -63,6 +59,11 @@ public class ListComputersServlet extends HttpServlet {
 		else if(nameSearsh != null && !nameSearsh.isEmpty()) {		
 			listComputer = computerService.getComputersByName(nameSearsh);
 			LOGGER.info("FindByNameSize : " + listComputer.size());
+		}
+		else if(orderBy != null && !orderBy.isEmpty()) {
+			
+			listComputer = computerService.getComputersOrderBy(orderBy);
+			System.out.println("nb : " + listComputer.size());
 		}
 		else {
 			
@@ -86,47 +87,13 @@ public class ListComputersServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		System.out.println("ListComputersServlet : doPost... ");
-
 		
-//		String getpage  = request.getParameter("page");
-//		String sizePageString  = request.getParameter("nbPages");
-//		String nameSearsh  = request.getParameter("name");
-//		
-//		System.out.println("page : " + getpage);
-//		System.out.println("Size page : " + sizePageString);
-//		System.out.println("name searshed : " + nameSearsh);
-//		
-//		if(getpage!=null && !getpage.isEmpty()) {
-//			
-//			page = Integer.parseInt(getpage);
-//			
-//			page = page <= 0 ? 1: page;
-//			page =  (page >= (Math.ceil((nbComputers/(double)sizePage))) ? (int)Math.ceil((nbComputers/(double)sizePage)): page);
-//		}
-//		
-//		if(sizePageString != null && !sizePageString.isEmpty()) {
-//			sizePage  = Integer.parseInt(sizePageString);
-//		}
-//		
-//		
-//		if(nameSearsh != null && !nameSearsh.isEmpty()) {
-//			
-//			
-//			
-//		}
-		//if(nameSearsh != null && !nameSearsh.isEmpty())
-		
-		
-		
-		data(request);
 		
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/dashboard.jsp" ).forward( request, response );
 
 
 	}
 
-	private void data(HttpServletRequest request) {
-		
-	}
+	
 
 }

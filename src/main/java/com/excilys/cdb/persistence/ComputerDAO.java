@@ -51,6 +51,12 @@ public class ComputerDAO {
     		+ " LEFT JOIN company ON ct.company_id = company.id"
 	    	+ " where ct.name like ? ";
 
+	private static final String ORDER_BY = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+    		+ " ct.company_id, company.id, company.name as company_name"
+    		+ " from computer ct"
+    		+ " LEFT JOIN company ON ct.company_id = company.id"
+    		+ " ORDER BY ";
+	
 	
 	public static ComputerDAO INSTANCE = null;
 	
@@ -336,6 +342,52 @@ public int getNbComputers() {
 		}
 
 		return list;
+		
+		
+	}
+	
+	
+	public List<Computer> getComputersOrderBy(String columnName){
+		
+		
+			List<Computer> list = new ArrayList<Computer>();
+		
+		try(
+				Connection connect = DatabaseConnection.getInstance().getConnect();
+				PreparedStatement preparedStmt = connect.prepareStatement((ORDER_BY+"ct."+columnName));
+				) {
+			
+			 
+			 // String ss = "ct."+columnName;
+			 // preparedStmt.setString(1, ss);
+		      ResultSet resultSet = preparedStmt.executeQuery();
+		      
+		      System.out.println(ORDER_BY+"ct."+columnName);
+		      
+				
+			
+		      while (resultSet.next())
+		      {
+		        
+		    	  Computer c = resultsetToComputer(resultSet);
+		        		 		 		     
+		        list.add(c);
+		      }
+		      
+		      System.out.println(list.get(0).getName());
+		      
+		    
+			LOGGER.info("success get list computers ");
+			resultSet.close();
+		      
+		} catch (SQLException e) {
+			LOGGER.info("failed get list computers ");
+			e.printStackTrace();
+		}
+
+
+		return list;
+		
 		
 		
 	}

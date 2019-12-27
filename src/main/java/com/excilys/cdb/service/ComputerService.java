@@ -1,5 +1,7 @@
 package com.excilys.cdb.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.excilys.cdb.model.Computer;
@@ -54,6 +56,11 @@ public class ComputerService {
 	
 	public List<Computer>  getComputersByName(String name) {
 		return computerDAO.getComputersByName(name);
-	} 
+	}
+	
+	public List<Computer> getComputersOrderBy(String columnName){
+		
+		return computerDAO.getComputersOrderBy(columnName);
+	}
 
 }

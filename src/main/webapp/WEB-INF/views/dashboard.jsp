@@ -65,14 +65,23 @@
                             </span>
                         </th>
                         <th>
-                            Computer name
+                            Computer name - 
+                             <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=name" id="orderBy">
+                                        <i class="fa fa-sort fa-lg"></i>
+                              </a>
                         </th>
                         <th>
-                            Introduced date
+                            Introduced date - 
+                            <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=introduced" id="orderBy">
+                                        <i class="fa fa-sort fa-lg"></i>
+                              </a>
                         </th>
                         <!-- Table header for Discontinued Date -->
                         <th>
                             Discontinued date
+                            <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=discontinued" id="orderBy">
+                                        <i class="fa fa-sort fa-lg"></i>
+                              </a>
                         </th>
                         <!-- Table header for Company -->
                         <th>
