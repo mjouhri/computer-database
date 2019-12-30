@@ -48,6 +48,7 @@ public class Main {
 					System.out.println("6 - Delete a computer");
 					System.out.println("7 - Detailed information of one company");
 					System.out.println("8 - Get Page");
+					System.out.println("9 - Delete company");
 					System.out.println("0 - Exit");
 					System.out.print("Your choice : ");
 					
@@ -138,6 +139,16 @@ public class Main {
 						for (Computer computer : computerService.getPage(intScanner, 20)) {
 							System.out.println(computer);
 						}
+						
+						break;
+						
+					case 9 : 
+						
+						System.out.print("Company id : ");
+						scanner = new Scanner(System.in);
+						intScanner = scanner.nextInt();
+						
+						companyService.deleteCompany(intScanner);
 						
 						break;
 					

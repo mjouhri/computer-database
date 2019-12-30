@@ -31,6 +31,10 @@ public class CompanyService {
 		return companyDAO.getCompanyById(id).orElse(null);
 	}
 	
+	public void deleteCompany(int companyId) {
+		companyDAO.deleteCompany(companyId);
+	}
+	
 	
 	
 	

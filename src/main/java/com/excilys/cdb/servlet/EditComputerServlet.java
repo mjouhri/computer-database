@@ -30,19 +30,17 @@ public class EditComputerServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LOGGER.info("EditComputerServlet : doGet ... ");
 		
-		/// get id
-		
-		int idComputer = 1;
+		int idComputer  = Integer.parseInt(request.getParameter("companyId"));
 		
 		computer = computerService.getComputerById(idComputer);
 		listCompany = companyService.getListCompany();
 		
-		request.getParameter("computerName"); 
-		request.getParameter("introduced");
-		request.getParameter("discontinued");
-		request.setAttribute("listCompany", listCompany);
+		request.setAttribute("name", computer.getName());
+		request.setAttribute("introduced", computer.getIntroduced());
+		request.setAttribute("discontinued", computer.getDiscontinued());
+		request.setAttribute("companys", listCompany);
 		
-		
+
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/editComputer.jsp" ).forward( request, response );
 	
 	}
@@ -50,8 +48,8 @@ public class EditComputerServlet extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		LOGGER.info("EditComputerServlet : doGet ... ");
-	
+		LOGGER.info("EditComputerServlet : doPOST .... ");
+
 		String computerName   = request.getParameter("computerName"); 
 		String introduced   = request.getParameter("introduced");
 		String discontinued   = request.getParameter("discontinued"); 

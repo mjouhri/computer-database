@@ -296,8 +296,10 @@ public int getNbComputers() {
 	}
 	
 	public void deleteComputer(int id) {
-		Connection connect = DatabaseConnection.getInstance().getConnect();
-			try (PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
+		
+			try (
+					Connection connect = DatabaseConnection.getInstance().getConnect();
+					PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
 			      preparedStmt.execute();
 			      LOGGER.info("success delete new computer");
@@ -306,11 +308,10 @@ public int getNbComputers() {
 					e.printStackTrace();
 					LOGGER.info("failed delete new computer");
 			}
-			finally {
-				closeConnexion(connect);
-			}
 			
 		}
+	
+	
 	
 	public List<Computer> getComputersByName(String name){
 		

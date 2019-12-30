@@ -24,6 +24,10 @@ public class CompanyDAO {
 	private static final String FIND_ALL_COMPANYS = "select id, name"
     												+ " from company;";
 	
+	private static final String DELETE_COMPANY_BY_COMPANYID = "delete from company where id = ? ;";
+	
+	private static final String DELETE_COMPUTERS_BY_COMPANYID = "delete from computer where company_id = ? ;";
+	
 	 
 	private static CompanyDAO INSTANCE = null;
 	
@@ -98,6 +102,32 @@ public class CompanyDAO {
 		}
 	
 		return list;
+	}
+	
+	public void deleteCompany(int companyId) {
+		
+		try (	Connection connect = DatabaseConnection.getInstance().getConnect();
+				PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPANY_BY_COMPANYID);
+				PreparedStatement preparedStmt2 = connect.prepareStatement(DELETE_COMPUTERS_BY_COMPANYID);
+				){
+			
+				connect.setAutoCommit(false);
+			
+				preparedStmt.setInt(1, companyId);
+				preparedStmt.execute();
+				
+				preparedStmt2.setInt(1, companyId);
+				preparedStmt2.execute();
+				
+				connect.commit();
+		      
+		      LOGGER.info("success delete company");
+			
+		} catch (SQLException e) {
+				e.printStackTrace();
+				LOGGER.info("failed delete company");
+		}
+		
 	}
 
 	private void closeConnexion(Connection connect) {

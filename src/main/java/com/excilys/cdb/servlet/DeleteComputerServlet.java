@@ -22,10 +22,10 @@ public class DeleteComputerServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LOGGER.info("DeleteComputerServlet : doGet ... ");
+
 		
-		/// get id
+		int idComputer  = Integer.parseInt(request.getParameter("idComputer"));
 		
-		int idComputer = 600;
 		
 		computerService.deleteComputer(idComputer);
 		
