@@ -3,7 +3,9 @@ package com.excilys.cdb.servlet;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,22 +13,37 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.ComputerService;
 
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+@Controller
+@WebServlet(name = "dashboard", urlPatterns = {"/dashboard"})
 public class ListComputersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ListComputersServlet.class);	
+	
+	@Autowired
+	private ComputerService computerService;
 
-	private ComputerService computerService = ComputerService.getInstance();
-	private int page = 1;
+	
+
 	private int nbComputers = 0;
 	private int sizePage = 10;
 	private int nbPages = 0;
+	private int page = 0;
 	private List<Computer> listComputer;
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

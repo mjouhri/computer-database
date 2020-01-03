@@ -1,26 +1,28 @@
 package com.excilys.cdb.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.ComputerDAO;
 
+@Service
 public class ComputerService {
+	
 	private ComputerDAO computerDAO;
 
-	private static ComputerService INSTANCE = null;
+//	private static ComputerService INSTANCE = null;
 
-	private ComputerService() {
-		this.computerDAO = ComputerDAO.getInstance();
-		
-	}
-	
-	public static ComputerService getInstance() {
-		if (INSTANCE == null) INSTANCE = new ComputerService();
-		return INSTANCE;
-	}
+//	private ComputerService() {
+//		this.computerDAO = ComputerDAO.getInstance();
+//		
+//	}
+//	
+//	public static ComputerService getInstance() {
+//		if (INSTANCE == null) INSTANCE = new ComputerService();
+//		return INSTANCE;
+//	}
 
 	public ComputerService(ComputerDAO computerDAO) {
 		this.computerDAO = computerDAO;

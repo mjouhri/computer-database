@@ -10,10 +10,11 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.model.Company;
 
-
+@Repository
 public class CompanyDAO {
 
 	
@@ -33,23 +34,23 @@ public class CompanyDAO {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
-	private CompanyDAO() {
+	private DatabaseConnection databaseConnection;
+	
+	
+	private CompanyDAO(DatabaseConnection databaseConnection) {
+		this.databaseConnection = databaseConnection;
 	}
 	
-	public static CompanyDAO getInstance() {
-		LOGGER.info("getInstance CompanyDAO");
-		
-		if (INSTANCE == null) INSTANCE = new CompanyDAO();
-		return INSTANCE;
-		 
-	}
-	
-	public CompanyDAO(DatabaseConnection mySQLAccess) {
-		super();
-	}
+//	public static CompanyDAO getInstance() {
+//		LOGGER.info("getInstance CompanyDAO");
+//		
+//		if (INSTANCE == null) INSTANCE = new CompanyDAO();
+//		return INSTANCE;
+//		 
+//	}
 	
 	public Optional<Company> getCompanyById(int id) {
-		Connection connect = DatabaseConnection.getInstance().getConnect();
+		Connection connect = databaseConnection.getConnection();
 		Company company = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
@@ -77,7 +78,7 @@ public class CompanyDAO {
 	
 	public List<Company> getListCompany() {
 		
-		Connection connect = DatabaseConnection.getInstance().getConnect();
+		Connection connect = databaseConnection.getConnection();
 		
 		List<Company> list = new ArrayList<Company>();
 		
@@ -106,19 +107,19 @@ public class CompanyDAO {
 	
 	public void deleteCompany(int companyId) {
 		
-		try (	Connection connect = DatabaseConnection.getInstance().getConnect();
+		try (	Connection connect = databaseConnection.getConnection();
 				PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPANY_BY_COMPANYID);
 				PreparedStatement preparedStmt2 = connect.prepareStatement(DELETE_COMPUTERS_BY_COMPANYID);
 				){
 			
 				connect.setAutoCommit(false);
 			
-				preparedStmt.setInt(1, companyId);
-				preparedStmt.execute();
-				
 				preparedStmt2.setInt(1, companyId);
 				preparedStmt2.execute();
 				
+				preparedStmt.setInt(1, companyId);
+				preparedStmt.execute();
+				// rollbqck
 				connect.commit();
 		      
 		      LOGGER.info("success delete company");

@@ -2,26 +2,26 @@ package com.excilys.cdb.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDAO;
 
+@Service
 public class CompanyService {
 	
 	private CompanyDAO companyDAO;
-	private static CompanyService INSTANCE = null;
 
-	private CompanyService() {
-		this.companyDAO = CompanyDAO.getInstance();
-	}
 	
-	public static CompanyService getInstance() {
-		if(INSTANCE == null) INSTANCE = new CompanyService();
-		return INSTANCE;
-	}
-	
-	public CompanyService(CompanyDAO companyDAO) {
+	private CompanyService(CompanyDAO companyDAO) {
 		this.companyDAO = companyDAO;
 	}
+	
+//	public static CompanyService getInstance() {
+//		if(INSTANCE == null) INSTANCE = new CompanyService();
+//		return INSTANCE;
+//	}
+	
 	
 	public List<Company> getListCompany() {
 		return companyDAO.getListCompany(); 

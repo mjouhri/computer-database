@@ -12,10 +12,12 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
+@Repository
 public class ComputerDAO {
 	
 	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
@@ -43,6 +45,12 @@ public class ComputerDAO {
 	
 	private static final String FIND_PAGE = " LIMIT ?, ?";
 	
+	private static final String FIND_PAGE_2 =  "select computer.id, computer.name, computer.introduced, computer.discontinued,"
+									    		+ " computer.company_id, company.id, company.name as company_name"
+									    		+ " from computer"
+									    		+ " LEFT JOIN company ON computer.company_id = company.id"
+												+ " LIMIT ?, ?";
+	
 	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
 	
 	private static final String FIND_COMPUTER_BY_NAME = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
@@ -61,28 +69,27 @@ public class ComputerDAO {
 	public static ComputerDAO INSTANCE = null;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
- 
 	
-	private ComputerDAO() { 
-	}
+	DatabaseConnection databaseConnection;
 	
-	public static ComputerDAO getInstance() {
-		LOGGER.info("getInstance ComputerDAO");
-
-		if (INSTANCE == null) INSTANCE = new ComputerDAO();
-		return INSTANCE;
+	private ComputerDAO(DatabaseConnection databaseConnection) { 
+		this.databaseConnection = databaseConnection;
 	}
+//	
+//	public static ComputerDAO getInstance() {
+//		LOGGER.info("getInstance ComputerDAO");
+//
+//		if (INSTANCE == null) INSTANCE = new ComputerDAO();
+//		return INSTANCE;
+//	}
 
-	public ComputerDAO(DatabaseConnection mySQLAccess) {
-		super();
-	}
 	
 	public List<Computer> getListComputer() {
 		
 		List<Computer> list = new ArrayList<Computer>();
 		
 		try(
-				Connection connect = DatabaseConnection.getInstance().getConnect();
+				Connection connect = databaseConnection.getConnection();
 				PreparedStatement preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS);
 				ResultSet resultSet = preparedStmt.executeQuery();) {
 			
@@ -111,7 +118,7 @@ public int getNbComputers() {
 
 		int count = 0;
 		
-		try(Connection connect = DatabaseConnection.getInstance().getConnect();)
+		try(Connection connect = databaseConnection.getConnection();)
 		{
 			
 			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
@@ -134,10 +141,12 @@ public int getNbComputers() {
 	}
 
 	public List<Computer> getPage(int page, int length) {
+		
+		LOGGER.info("page  : " + page + "  length   : "+length);
 
 		List<Computer> list = new ArrayList<Computer>();
 		
-		try(Connection connect = DatabaseConnection.getInstance().getConnect();)
+		try(Connection connect = databaseConnection.getConnection();)
 		{
 			
 			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
@@ -149,19 +158,20 @@ public int getNbComputers() {
 				
 				LOGGER.info("Size computer table : " + count );
 				
-				preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS 
-						+  FIND_PAGE);
+				PreparedStatement preparedStmt2 = connect.prepareStatement(FIND_PAGE_2);
 				
-				int startPage = (length) * (page - 1);
+				int startPage = (length) * (page + 1);
 				
-				preparedStmt.setInt(1, startPage);
-				preparedStmt.setInt(2, length);
-				resultSet = preparedStmt.executeQuery();
+				LOGGER.info("startPage  : " + startPage + "  length   : "+length);
 				
-			      while (resultSet.next())
+				preparedStmt2.setInt(1, startPage);
+				preparedStmt2.setInt(2, length);
+				ResultSet resultSet2 = preparedStmt2.executeQuery();
+				
+			      while (resultSet2.next())
 			      {
 			        
-			        Computer c = resultsetToComputer(resultSet);
+			        Computer c = resultsetToComputer(resultSet2);
 			        		 		 		     
 			        list.add(c);   
 			      }
@@ -213,7 +223,7 @@ public int getNbComputers() {
 	
 	public Optional<Computer> getComputerById(int id) {
 		
-		Connection connect = DatabaseConnection.getInstance().getConnect();
+		Connection connect = databaseConnection.getConnection();
 		Computer computer = null; 
 		
 		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
@@ -239,7 +249,7 @@ public int getNbComputers() {
 	}
 	
 	public boolean newComputer(Computer computer) {
-		Connection connect = DatabaseConnection.getInstance().getConnect();
+		Connection connect = databaseConnection.getConnection();
 
 		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
@@ -270,7 +280,7 @@ public int getNbComputers() {
 	}
 	
 	public void updateComputer(Computer computer) {
-		Connection connect = DatabaseConnection.getInstance().getConnect();
+		Connection connect = databaseConnection.getConnection();
 		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
 			  preparedStmt.setString (1, computer.getName());
 			  preparedStmt.setTimestamp(2, computer.
@@ -298,7 +308,7 @@ public int getNbComputers() {
 	public void deleteComputer(int id) {
 		
 			try (
-					Connection connect = DatabaseConnection.getInstance().getConnect();
+					Connection connect = databaseConnection.getConnection();
 					PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
 			      preparedStmt.setInt(1, id);
 			      preparedStmt.execute();
@@ -318,7 +328,7 @@ public int getNbComputers() {
 		List<Computer> list = new ArrayList<Computer>();
 		
 		try(
-				Connection connect = DatabaseConnection.getInstance().getConnect();
+				Connection connect = databaseConnection.getConnection();
 				PreparedStatement preparedStmt = connect.prepareStatement(FIND_COMPUTER_BY_NAME);
 				
 				) {
@@ -354,7 +364,7 @@ public int getNbComputers() {
 			List<Computer> list = new ArrayList<Computer>();
 		
 		try(
-				Connection connect = DatabaseConnection.getInstance().getConnect();
+				Connection connect = databaseConnection.getConnection();
 				PreparedStatement preparedStmt = connect.prepareStatement((ORDER_BY+"ct."+columnName));
 				) {
 			
