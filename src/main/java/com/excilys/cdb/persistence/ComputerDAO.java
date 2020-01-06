@@ -43,8 +43,6 @@ public class ComputerDAO {
 	
 	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";
 	
-	private static final String FIND_PAGE = " LIMIT ?, ?";
-	
 	private static final String FIND_PAGE_2 =  "select computer.id, computer.name, computer.introduced, computer.discontinued,"
 									    		+ " computer.company_id, company.id, company.name as company_name"
 									    		+ " from computer"
@@ -75,13 +73,6 @@ public class ComputerDAO {
 	private ComputerDAO(DatabaseConnection databaseConnection) { 
 		this.databaseConnection = databaseConnection;
 	}
-//	
-//	public static ComputerDAO getInstance() {
-//		LOGGER.info("getInstance ComputerDAO");
-//
-//		if (INSTANCE == null) INSTANCE = new ComputerDAO();
-//		return INSTANCE;
-//	}
 
 	
 	public List<Computer> getListComputer() {
@@ -105,10 +96,8 @@ public class ComputerDAO {
 
 		      
 		} catch (SQLException e) {
-			LOGGER.info("failed get list computers ");
-			e.printStackTrace();
+			LOGGER.error("failed get list computers : " + e.getMessage());
 		}
-
 
 		return list;
 	}
@@ -128,14 +117,12 @@ public int getNbComputers() {
 				
 				count = resultSet.getInt("nb");
 				
-				LOGGER.info("Size computer table : " + count );
-				
+				LOGGER.info("Size computer table : " + count );	
 			}
 		      
 		} catch (SQLException e) {
-			LOGGER.info("failed get list computers ");
-			e.printStackTrace();
-		}
+				LOGGER.error("failed get list computers " + e.getMessage());
+			}
 
 		return count;
 	}
@@ -181,8 +168,7 @@ public int getNbComputers() {
 			}
 		      
 		} catch (SQLException e) {
-			LOGGER.info("failed get list computers ");
-			e.printStackTrace();
+			LOGGER.error("failed get list computers " + e.getMessage());
 		}
 
 		return list;
@@ -209,24 +195,11 @@ public int getNbComputers() {
 	}
 	
 	
-
-	private void closeConnexion(Connection connect) {
-		try {
-			connect.close();
-			LOGGER.info("success : closing database");
-		} catch (Exception e2) {
-			e2.printStackTrace();
-			LOGGER.info("failed : closing database");
-		}
-	} 
-	
-	
 	public Optional<Computer> getComputerById(int id) {
-		
-		Connection connect = databaseConnection.getConnection();
 		Computer computer = null; 
 		
-		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
+		try(Connection connect = databaseConnection.getConnection();
+				PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
 				) {
 			
 			preparedStatement.setInt(1, id);
@@ -238,26 +211,23 @@ public int getNbComputers() {
 				
 			LOGGER.info("success get computer by id : " + id);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			LOGGER.info("failed get computer by id : " + id + " : error " + e.getMessage());
-		}
-		finally {
-			closeConnexion(connect);
+			LOGGER.error("failed get computer by id : " + id + " : error " + e.getMessage());
 		}
 
 		return Optional.ofNullable(computer);
 	}
 	
 	public boolean newComputer(Computer computer) {
-		Connection connect = databaseConnection.getConnection();
-
-		try (PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
+		try (
+				Connection connect = databaseConnection.getConnection();
+				PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
 			     preparedStmt.setString (1, computer.getName());
 			     
 			     preparedStmt.setTimestamp(2, computer.
 			    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
 			    		 );
-			     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued())
+			     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp
+			    		 .valueOf(computer.getDiscontinued())
 			    		 );
 			     if ( computer.getCompany() !=null ) {
 			    	 	preparedStmt.setInt(4, computer.getCompany().getIdCompany());
@@ -269,24 +239,23 @@ public int getNbComputers() {
 			     return true;
 			      
 		} catch (SQLException e) {
-			e.printStackTrace();
-			LOGGER.info("failed creat new computer");
+			LOGGER.error("failed creat new computer"+e.getMessage());
 			return false;
 		}
-		finally {
-			closeConnexion(connect);
-		}
+
 		
 	}
 	
 	public void updateComputer(Computer computer) {
-		Connection connect = databaseConnection.getConnection();
-		try (PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
+		
+		try (	Connection connect = databaseConnection.getConnection();
+				PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
 			  preparedStmt.setString (1, computer.getName());
 			  preparedStmt.setTimestamp(2, computer.
 		    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
 		    		 );
-		     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued())
+		     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp
+		    		 .valueOf(computer.getDiscontinued())
 		    		 );
 		      if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getCompany().getIdCompany());
 		      else preparedStmt.setString(4, null);
@@ -296,32 +265,24 @@ public int getNbComputers() {
 		      LOGGER.info("success update new computer");
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
-			LOGGER.info("failed creat update computer");
-		}
-		finally {
-			closeConnexion(connect);
+			LOGGER.error("failed creat update computer"+e.getMessage());
 		}
 		
 	}
 	
 	public void deleteComputer(int id) {
 		
-			try (
-					Connection connect = databaseConnection.getConnection();
+			try (Connection connect = databaseConnection.getConnection();
 					PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
-			      preparedStmt.setInt(1, id);
-			      preparedStmt.execute();
-			      LOGGER.info("success delete new computer");
+				     preparedStmt.setInt(1, id);
+				     preparedStmt.execute();
+				     LOGGER.info("success delete new computer");
 				
 			} catch (SQLException e) {
-					e.printStackTrace();
-					LOGGER.info("failed delete new computer");
+					LOGGER.error("failed delete new computer"+e.getMessage());
 			}
 			
 		}
-	
-	
 	
 	public List<Computer> getComputersByName(String name){
 		
@@ -346,10 +307,9 @@ public int getNbComputers() {
 		      resultSet.close();
 		      
 			LOGGER.info("success get list computers by name ");
-
 		      
 		} catch (SQLException e) {
-			LOGGER.info("failed get list computers by name :" + e.getMessage());
+			LOGGER.error("failed get list computers by name :" + e.getMessage());
 		}
 
 		return list;
@@ -369,8 +329,6 @@ public int getNbComputers() {
 				) {
 			
 			 
-			 // String ss = "ct."+columnName;
-			 // preparedStmt.setString(1, ss);
 		      ResultSet resultSet = preparedStmt.executeQuery();
 		      
 		      System.out.println(ORDER_BY+"ct."+columnName);
@@ -392,15 +350,11 @@ public int getNbComputers() {
 			resultSet.close();
 		      
 		} catch (SQLException e) {
-			LOGGER.info("failed get list computers ");
-			e.printStackTrace();
+			LOGGER.error("failed get list computers " + e.getMessage());
 		}
 
-
 		return list;
-		
-		
-		
+	
 	}
 	
 

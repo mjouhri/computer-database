@@ -17,12 +17,6 @@ public class CompanyService {
 		this.companyDAO = companyDAO;
 	}
 	
-//	public static CompanyService getInstance() {
-//		if(INSTANCE == null) INSTANCE = new CompanyService();
-//		return INSTANCE;
-//	}
-	
-	
 	public List<Company> getListCompany() {
 		return companyDAO.getListCompany(); 
 	}

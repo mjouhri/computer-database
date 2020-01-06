@@ -11,21 +11,11 @@ import javax.sql.DataSource;
 
 @Component
 public class DatabaseConnection {
-	private final static String url = "jdbc:mysql://localhost:3306/computer-database-db?autoReconnect=true&useSSL=false";
-	 
-	private final static String user = "admincdb";
-	 
-	private final static String passwd = "qwerty1234";
 	    
     private Connection connect = null;
     
-    private static DatabaseConnection INSTANCE = null;
-    
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);	
     
-//   
-//    private static HikariConfig config;// = new HikariConfig("/datasource.properties" );
-//	private static HikariDataSource ds;// = new HikariDataSource( config );
 	private Connection connection;
 	
 	private DataSource dataSource;
@@ -39,10 +29,11 @@ public class DatabaseConnection {
         try {
 			if(connection == null || connection.isClosed()) {
 				connection = dataSource.getConnection();
+				LOGGER.info("connected");
 				return connection;
 			}
 		} catch (SQLException e) {
-			
+			LOGGER.error("success get list computers" + e);
 		}
         return connection;
 	}
@@ -60,6 +51,10 @@ public class DatabaseConnection {
 
 
 }
+
+//
+//private static HikariConfig config;// = new HikariConfig("/datasource.properties" );
+//private static HikariDataSource ds;// = new HikariDataSource( config );
     
 //    public static DatabaseConnection getInstance() {
 //    	if (INSTANCE == null) {

@@ -29,31 +29,23 @@ public class CompanyDAO {
 	
 	private static final String DELETE_COMPUTERS_BY_COMPANYID = "delete from computer where company_id = ? ;";
 	
-	 
-	private static CompanyDAO INSTANCE = null;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
 	private DatabaseConnection databaseConnection;
 	
 	
+	
 	private CompanyDAO(DatabaseConnection databaseConnection) {
 		this.databaseConnection = databaseConnection;
 	}
 	
-//	public static CompanyDAO getInstance() {
-//		LOGGER.info("getInstance CompanyDAO");
-//		
-//		if (INSTANCE == null) INSTANCE = new CompanyDAO();
-//		return INSTANCE;
-//		 
-//	}
-	
 	public Optional<Company> getCompanyById(int id) {
-		Connection connect = databaseConnection.getConnection();
-		Company company = null; 
 		
-		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
+		Company company=null;
+		
+		try(Connection connect = databaseConnection.getConnection();
+			PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
@@ -66,9 +58,7 @@ public class CompanyDAO {
 			LOGGER.info("success get company by id : " + id);
 			resultSet.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnexion(connect);
+			LOGGER.error("faild get company by id : " + e);
 		}
 		
 		return Optional.ofNullable(company);
@@ -96,11 +86,9 @@ public class CompanyDAO {
 		      }
 		      LOGGER.info("success :  get list companies");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			  LOGGER.error("faild get list companies : " + e);
 		} 
-		finally {
-			closeConnexion(connect);
-		}
+		
 	
 		return list;
 	}
@@ -119,27 +107,15 @@ public class CompanyDAO {
 				
 				preparedStmt.setInt(1, companyId);
 				preparedStmt.execute();
-				// rollbqck
+				// rollback
 				connect.commit();
 		      
-		      LOGGER.info("success delete company");
+				LOGGER.info("success delete company");
 			
 		} catch (SQLException e) {
-				e.printStackTrace();
-				LOGGER.info("failed delete company");
+				LOGGER.error("failed delete company : " + e);
 		}
 		
 	}
-
-	private void closeConnexion(Connection connect) {
-		try {
-			connect.close();
-			LOGGER.info("success : closing database");
-		} catch (Exception e2) {
-			e2.printStackTrace();
-			LOGGER.info("failed : closing database");
-		}
-	}
-	
 
 }

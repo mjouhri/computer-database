@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 
 import com.excilys.cdb.mapper.Mapper;
 
-public class Validator { // retourner des exceptions
+public class Validator { // Returner exceptions
 	
 	private static boolean validateName(String name) {
-		return name != null && !name.isEmpty() && name.length() > 2 ? true : false;
+	 if(name != null && !name.isEmpty() && name.length() > 2) return true;
+	 else return false;
 	}
 	
 	public static boolean ValidateAddComputer( String name, String introduced, String discontinued) {
@@ -28,7 +29,8 @@ public class Validator { // retourner des exceptions
 	}
 		
 	private static boolean isvalidDate(LocalDateTime date) {
-			return date != null && date.getYear() > 1970 ? true : false;
+			if( date != null && date.getYear() > 1970) return true; 
+			else return false;
 	}
 			
 }
