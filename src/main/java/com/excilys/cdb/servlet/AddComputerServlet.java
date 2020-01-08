@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
@@ -66,13 +67,15 @@ public class AddComputerServlet extends HttpServlet{
 								);
 		}
 		
-		
+		//// gestion des erreurs avec les exceptions
 		
 		listCompany = companyService.getListCompany();
 		request.setAttribute("listCompany", listCompany);
 				
 		
+		/// afficher le message d'erreur au cas ou et rederection vers listPage
 		
+		/// setQttribute error et l'afficher dans jsp
 		this.getServletContext().getRequestDispatcher( "/WEB-INF/views/addComputer.jsp" ).forward( request, response );
 
 	}

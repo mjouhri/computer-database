@@ -30,17 +30,13 @@ public class MainConfig  extends AbstractContextLoaderInitializer {
 	@Value("${dataSource.password}")
 	private String password;
 	
-//	private static final Logger LOG = LoggerFactory.getLogger(MainConfig.class );	
+	private static final Logger LOG = LoggerFactory.getLogger(MainConfig.class );	
 	
 	@Override
 	protected WebApplicationContext createRootApplicationContext() {
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		rootContext.register(MainConfig.class);
-		
-//		LOG.info("ooooooh yes");
-//		
-//		System.out.println("ooooooh yes");
-		
+		LOG.info("Spring starting ...");
 		return rootContext;
 	}
 	

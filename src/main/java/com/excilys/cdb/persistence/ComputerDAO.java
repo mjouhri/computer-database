@@ -1,24 +1,24 @@
 package com.excilys.cdb.persistence;
 
-import java.sql.Connection;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.cdb.model.Company;
+import com.excilys.cdb.mapper.ComputerDaoMapper;
 import com.excilys.cdb.model.Computer;
 
 @Repository
 public class ComputerDAO {
+	
+	JdbcTemplate jdbcTemplate;
 	
 	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
 											    		+ " ct.company_id, company.id, company.name as company_name"
@@ -63,299 +63,102 @@ public class ComputerDAO {
     		+ " LEFT JOIN company ON ct.company_id = company.id"
     		+ " ORDER BY ";
 	
-	
-	public static ComputerDAO INSTANCE = null;
-	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
-	DatabaseConnection databaseConnection;
-	
-	private ComputerDAO(DatabaseConnection databaseConnection) { 
-		this.databaseConnection = databaseConnection;
+	@Autowired
+	public ComputerDAO(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
 	
 	public List<Computer> getListComputer() {
-		
-		List<Computer> list = new ArrayList<Computer>();
-		
-		try(
-				Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS);
-				ResultSet resultSet = preparedStmt.executeQuery();) {
-			
-		      while (resultSet.next())
-		      {
-		        
-		    	  Computer c = resultsetToComputer(resultSet);
-		        		 		 		     
-		        list.add(c);   
-		      }
-		      
-			LOGGER.info("success get list computers ");
 
-		      
-		} catch (SQLException e) {
-			LOGGER.error("failed get list computers : " + e.getMessage());
-		}
-
-		return list;
+		return jdbcTemplate.query(FIND_ALL_COMPUTERS, new ComputerDaoMapper());
 	}
 	 
 	
-public int getNbComputers() {
+	public int getNbComputers() {
 
-		int count = 0;
-		
-		try(Connection connect = databaseConnection.getConnection();)
-		{
-			
-			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
-			ResultSet resultSet = preparedStmt.executeQuery();
-		
-			if(resultSet.next()) {
-				
-				count = resultSet.getInt("nb");
-				
-				LOGGER.info("Size computer table : " + count );	
-			}
-		      
-		} catch (SQLException e) {
-				LOGGER.error("failed get list computers " + e.getMessage());
-			}
 
-		return count;
+		return jdbcTemplate.queryForObject(SIZE_TABLE, Integer.class);
 	}
 
 	public List<Computer> getPage(int page, int length) {
 		
-		LOGGER.info("page  : " + page + "  length   : "+length);
-
-		List<Computer> list = new ArrayList<Computer>();
+		int startPage = (length) * (page + 1);
+		return jdbcTemplate.query(FIND_PAGE_2, new ComputerDaoMapper(), startPage, length);
 		
-		try(Connection connect = databaseConnection.getConnection();)
-		{
-			
-			PreparedStatement preparedStmt = connect.prepareStatement(SIZE_TABLE);
-			ResultSet resultSet = preparedStmt.executeQuery();
-		
-			if(resultSet.next()) {
-				
-				int count = resultSet.getInt("nb");
-				
-				LOGGER.info("Size computer table : " + count );
-				
-				PreparedStatement preparedStmt2 = connect.prepareStatement(FIND_PAGE_2);
-				
-				int startPage = (length) * (page + 1);
-				
-				LOGGER.info("startPage  : " + startPage + "  length   : "+length);
-				
-				preparedStmt2.setInt(1, startPage);
-				preparedStmt2.setInt(2, length);
-				ResultSet resultSet2 = preparedStmt2.executeQuery();
-				
-			      while (resultSet2.next())
-			      {
-			        
-			        Computer c = resultsetToComputer(resultSet2);
-			        		 		 		     
-			        list.add(c);   
-			      }
-			      
-				LOGGER.info("success get list computers ");
-				
-			}
-		      
-		} catch (SQLException e) {
-			LOGGER.error("failed get list computers " + e.getMessage());
-		}
-
-		return list;
-	}
-
-	private Computer resultsetToComputer(ResultSet resultSet) throws SQLException {
-		Computer c = new Computer.ComputerBuilder()
-				.setId(resultSet.getInt("id"))
-				.setName(resultSet.getString("name"))
-				.setIntroduced(resultSet
-									.getTimestamp("introduced")==null?
-									null:resultSet.getTimestamp("introduced")
-									.toLocalDateTime())
-				.setDiscontinued(resultSet
-								.getTimestamp("discontinued")==null?
-								null:resultSet.getTimestamp("discontinued")
-								.toLocalDateTime())
-				.setCompany(new Company.CompanyBuilder()
-								.idCompany(resultSet.getInt("company_id"))
-								.nameCompany(resultSet.getString("company_name"))
-								.build())
-				.build();
-		return c;
 	}
 	
 	
 	public Optional<Computer> getComputerById(int id) {
-		Computer computer = null; 
-		
-		try(Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);		
-				) {
-			
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			if(resultSet.next()) {
-				computer = resultsetToComputer(resultSet);
-			}
-				
-			LOGGER.info("success get computer by id : " + id);
-		} catch (SQLException e) {
-			LOGGER.error("failed get computer by id : " + id + " : error " + e.getMessage());
-		}
 
-		return Optional.ofNullable(computer);
+		return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_ONE_COMPUTER, new Object[] { id }, new ComputerDaoMapper()));
 	}
 	
-	public boolean newComputer(Computer computer) {
-		try (
-				Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStmt = connect.prepareStatement(NEW_COMPUTER);) {
-			     preparedStmt.setString (1, computer.getName());
-			     
-			     preparedStmt.setTimestamp(2, computer.
-			    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
-			    		 );
-			     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp
-			    		 .valueOf(computer.getDiscontinued())
-			    		 );
-			     if ( computer.getCompany() !=null ) {
-			    	 	preparedStmt.setInt(4, computer.getCompany().getIdCompany());
-			    	 }
-			     else preparedStmt.setString(4, null);
-			     preparedStmt.execute();
-			     
-			     LOGGER.info("success creat new computer");
-			     return true;
-			      
-		} catch (SQLException e) {
-			LOGGER.error("failed creat new computer"+e.getMessage());
-			return false;
-		}
-
-		
+	public boolean newComputer(Computer computer) {	
+		return jdbcTemplate.update(NEW_COMPUTER,
+				computer.getName(),
+				computer.getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced()),
+				computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued()),
+				computer.getCompany()==null?null:computer.getCompany().getIdCompany()
+				) > 0;
 	}
 	
-	public void updateComputer(Computer computer) {
-		
-		try (	Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStmt = connect.prepareStatement(UPDATE_COMPUTER);) {
-			  preparedStmt.setString (1, computer.getName());
-			  preparedStmt.setTimestamp(2, computer.
-		    		 	getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced())
-		    		 );
-		     preparedStmt.setTimestamp(3, computer.getDiscontinued() ==null?null:Timestamp
-		    		 .valueOf(computer.getDiscontinued())
-		    		 );
-		      if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getCompany().getIdCompany());
-		      else preparedStmt.setString(4, null);
-		      preparedStmt.setInt   (5, computer.getId());
-		      
-		      preparedStmt.executeUpdate();
-		      LOGGER.info("success update new computer");
-			
-		} catch (SQLException e) {
-			LOGGER.error("failed creat update computer"+e.getMessage());
-		}
-		
+	public boolean updateComputer(Computer computer) {
+		return jdbcTemplate.update(UPDATE_COMPUTER,
+				computer.getId(),
+				computer.getName(),
+				computer.getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced()),
+				computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued()),
+				computer.getCompany()==null?null:computer.getCompany().getIdCompany()
+				) > 0;
 	}
 	
-	public void deleteComputer(int id) {
-		
-			try (Connection connect = databaseConnection.getConnection();
-					PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPUTER)){
-				     preparedStmt.setInt(1, id);
-				     preparedStmt.execute();
-				     LOGGER.info("success delete new computer");
-				
-			} catch (SQLException e) {
-					LOGGER.error("failed delete new computer"+e.getMessage());
-			}
-			
+	public boolean deleteComputer(int id) {	
+		return jdbcTemplate.update(DELETE_COMPUTER,	id) > 0;	
 		}
 	
 	public List<Computer> getComputersByName(String name){
-		
-		List<Computer> list = new ArrayList<Computer>();
-		
-		try(
-				Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStmt = connect.prepareStatement(FIND_COMPUTER_BY_NAME);
-				
-				) {
-			preparedStmt.setString (1, "%" + name+ "%");
-			ResultSet resultSet = preparedStmt.executeQuery();
-			
-		      while (resultSet.next())
-		      {
-		        
-		    	  Computer c = resultsetToComputer(resultSet);
-		        		 		 		     
-		        list.add(c);   
-		      }
-		      
-		      resultSet.close();
-		      
-			LOGGER.info("success get list computers by name ");
-		      
-		} catch (SQLException e) {
-			LOGGER.error("failed get list computers by name :" + e.getMessage());
-		}
-
-		return list;
-		
-		
+		return  jdbcTemplate.query(FIND_COMPUTER_BY_NAME,new ComputerDaoMapper(), "%" + name+ "%");
 	}
 	
 	
 	public List<Computer> getComputersOrderBy(String columnName){
+		return  jdbcTemplate.query((ORDER_BY+"ct."+columnName),new ComputerDaoMapper());
 		
-		
-			List<Computer> list = new ArrayList<Computer>();
-		
-		try(
-				Connection connect = databaseConnection.getConnection();
-				PreparedStatement preparedStmt = connect.prepareStatement((ORDER_BY+"ct."+columnName));
-				) {
-			
-			 
-		      ResultSet resultSet = preparedStmt.executeQuery();
-		      
-		      System.out.println(ORDER_BY+"ct."+columnName);
-		      
-				
-			
-		      while (resultSet.next())
-		      {
-		        
-		    	  Computer c = resultsetToComputer(resultSet);
-		        		 		 		     
-		        list.add(c);
-		      }
-		      
-		      System.out.println(list.get(0).getName());
-		      
-		    
-			LOGGER.info("success get list computers ");
-			resultSet.close();
-		      
-		} catch (SQLException e) {
-			LOGGER.error("failed get list computers " + e.getMessage());
-		}
-
-		return list;
-	
+//			List<Computer> list = new ArrayList<Computer>();
+//		
+//		try(
+//				Connection connect = databaseConnection.getConnection();
+//				PreparedStatement preparedStmt = connect.prepareStatement((ORDER_BY+"ct."+columnName));
+//				) {
+//			
+//			 
+//		      ResultSet resultSet = preparedStmt.executeQuery();
+//		      
+//		      System.out.println(ORDER_BY+"ct."+columnName);
+//		      
+//				
+//			
+//		      while (resultSet.next())
+//		      {
+//		        
+//		    	  Computer c = resultsetToComputer(resultSet);
+//		        		 		 		     
+//		        list.add(c);
+//		      }
+//		      
+//		      System.out.println(list.get(0).getName());
+//		      
+//		    
+//			LOGGER.info("success get list computers ");
+//			resultSet.close();
+//		      
+//		} catch (SQLException e) {
+//			LOGGER.error("failed get list computers " + e.getMessage());
+//		}
+//
+//		return list;
 	}
-	
-
 }

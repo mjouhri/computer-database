@@ -37,6 +37,23 @@ public class ListComputersServlet extends HttpServlet {
 //	public ListComputersServlet(ComputerService computerService) {
 //		this.computerService = computerService;
 //	}
+	
+	/// bean instance gerer par spring
+	
+	/// separrer la logique metier et technique
+	
+	// aop : 
+		// - getion transaction    - (add transactionnal) in spring
+		// -  logs  :   
+		// - 
+	
+	// spring modulable - en prend que les modules que nous avaons besion
+	
+	/// dans mvc
+		/// utuliser les dto
+		/// un controleur computer
+		// 
+	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
