@@ -52,7 +52,7 @@ public class ComputerDAO {
 	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
 	
 	private static final String FIND_COMPUTER_BY_NAME = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
-    		+ " ct.company_id, company.id, company.name as company_name"
+    		+ " ct.company_id, compakny.id, company.name as company_name"
     		+ " from computer ct"
     		+ " LEFT JOIN company ON ct.company_id = company.id"
 	    	+ " where ct.name like ? ";
@@ -63,36 +63,29 @@ public class ComputerDAO {
     		+ " LEFT JOIN company ON ct.company_id = company.id"
     		+ " ORDER BY ";
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
+	// private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
 	@Autowired
 	public ComputerDAO(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	
 	public List<Computer> getListComputer() {
-
 		return jdbcTemplate.query(FIND_ALL_COMPUTERS, new ComputerDaoMapper());
 	}
 	 
 	
 	public int getNbComputers() {
-
-
 		return jdbcTemplate.queryForObject(SIZE_TABLE, Integer.class);
 	}
 
 	public List<Computer> getPage(int page, int length) {
-		
 		int startPage = (length) * (page + 1);
 		return jdbcTemplate.query(FIND_PAGE_2, new ComputerDaoMapper(), startPage, length);
-		
 	}
 	
 	
 	public Optional<Computer> getComputerById(int id) {
-
 		return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_ONE_COMPUTER, new Object[] { id }, new ComputerDaoMapper()));
 	}
 	
@@ -127,38 +120,6 @@ public class ComputerDAO {
 	public List<Computer> getComputersOrderBy(String columnName){
 		return  jdbcTemplate.query((ORDER_BY+"ct."+columnName),new ComputerDaoMapper());
 		
-//			List<Computer> list = new ArrayList<Computer>();
-//		
-//		try(
-//				Connection connect = databaseConnection.getConnection();
-//				PreparedStatement preparedStmt = connect.prepareStatement((ORDER_BY+"ct."+columnName));
-//				) {
-//			
-//			 
-//		      ResultSet resultSet = preparedStmt.executeQuery();
-//		      
-//		      System.out.println(ORDER_BY+"ct."+columnName);
-//		      
-//				
-//			
-//		      while (resultSet.next())
-//		      {
-//		        
-//		    	  Computer c = resultsetToComputer(resultSet);
-//		        		 		 		     
-//		        list.add(c);
-//		      }
-//		      
-//		      System.out.println(list.get(0).getName());
-//		      
-//		    
-//			LOGGER.info("success get list computers ");
-//			resultSet.close();
-//		      
-//		} catch (SQLException e) {
-//			LOGGER.error("failed get list computers " + e.getMessage());
-//		}
-//
-//		return list;
+
 	}
 }

@@ -8,10 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.excilys.cdb.mapper.CompanyDaoMapper;
+import com.excilys.cdb.mapper.ComputerDaoMapper;
 import com.excilys.cdb.model.Company;
 
 @Repository
@@ -34,63 +39,23 @@ public class CompanyDAO {
 	
 	private DatabaseConnection databaseConnection;
 	
+	JdbcTemplate jdbcTemplate;
 	
-	
-	private CompanyDAO(DatabaseConnection databaseConnection) {
-		this.databaseConnection = databaseConnection;
+	private CompanyDAO(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	public Optional<Company> getCompanyById(int id) {
 		
-		Company company=null;
-		
-		try(Connection connect = databaseConnection.getConnection();
-			PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			if(resultSet.next()){
-				company = new Company.CompanyBuilder()
-						.idCompany(resultSet.getInt("id"))
-		        		.nameCompany(resultSet.getString("name"))
-		        		.build();
-			}
-			LOGGER.info("success get company by id : " + id);
-			resultSet.close();
-		} catch (SQLException e) {
-			LOGGER.error("faild get company by id : " + e);
-		}
-		
-		return Optional.ofNullable(company);
+		return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_ONE_COMPANY, new Object[] { id }, new CompanyDaoMapper()));
 		
 	}
 	
 	
 	public List<Company> getListCompany() {
 		
-		Connection connect = databaseConnection.getConnection();
+		return jdbcTemplate.query(FIND_ALL_COMPANYS, new CompanyDaoMapper());
 		
-		List<Company> list = new ArrayList<Company>();
-		
-		try (PreparedStatement statement = connect.prepareStatement(FIND_ALL_COMPANYS);
-				ResultSet resultSet = statement.executeQuery();)
-				{
-			
-		      while (resultSet.next())
-		      {
-		        Company c = new Company.CompanyBuilder()
-						.idCompany(resultSet.getInt("id"))
-		        		.nameCompany(resultSet.getString("name"))
-		        		.build();
-		        list.add(c);
-		      }
-		      LOGGER.info("success :  get list companies");
-		} catch (SQLException e) {
-			  LOGGER.error("faild get list companies : " + e);
-		} 
-		
-	
-		return list;
 	}
 	
 	public void deleteCompany(int companyId) {
