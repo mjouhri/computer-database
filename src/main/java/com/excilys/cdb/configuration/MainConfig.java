@@ -2,29 +2,36 @@ package com.excilys.cdb.configuration;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
+import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 @Configuration
-@ComponentScan("com.excilys.cdb") /// ajouter les package a scanner
+@EnableWebMvc
+@ComponentScan("com.excilys.cdb.controller,"
+		+ "com.excilys.cdb.persistence,"
+		+ "com.excilys.cdb.service" ) 
 @PropertySource("classpath:datasourcemysql.properties")
-public class MainConfig implements WebApplicationInitializer {
+public class MainConfig implements WebApplicationInitializer { /// WebMvcConfigurer
 	
 	@Value("${dataSource.driverClassName}")
 	private String jdbcDriver;
@@ -34,13 +41,11 @@ public class MainConfig implements WebApplicationInitializer {
 	private String username;
 	@Value("${dataSource.password}")
 	private String password;
-	
-	private static final Logger LOG = LoggerFactory.getLogger(MainConfig.class );	
-	
+		
 	@Override
 	public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
-        webCtx.register(MainConfig.class);
+        webCtx.register(MainConfig.class, SpringMVCConfig.class);
         webCtx.setServletContext(ctx);
         
         ServletRegistration.Dynamic servlet = ctx.addServlet("dispatcher", new DispatcherServlet(webCtx));
@@ -59,13 +64,16 @@ public class MainConfig implements WebApplicationInitializer {
     }
 	
 	@Bean
-  public ViewResolver viewResolver() {
-      InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-      viewResolver.setViewClass(JstlView.class);
-      viewResolver.setPrefix("/WEB-INF/views/");
-      viewResolver.setSuffix(".jsp");
-      return viewResolver;
-  }
+	  public ViewResolver viewResolver() {
+	      InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+	      viewResolver.setViewClass(JstlView.class);
+	      viewResolver.setPrefix("/WEB-INF/views/");
+	      viewResolver.setSuffix(".jsp");
+	      return viewResolver;
+	  }
+	
+	
+
 	
 }
 

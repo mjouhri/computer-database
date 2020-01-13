@@ -52,7 +52,7 @@ public class ComputerDAO {
 	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
 	
 	private static final String FIND_COMPUTER_BY_NAME = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
-    		+ " ct.company_id, compakny.id, company.name as company_name"
+    		+ " ct.company_id, company.id, company.name as company_name"
     		+ " from computer ct"
     		+ " LEFT JOIN company ON ct.company_id = company.id"
 	    	+ " where ct.name like ? ";
