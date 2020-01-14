@@ -31,7 +31,7 @@ import javax.servlet.ServletRegistration;
 		+ "com.excilys.cdb.persistence,"
 		+ "com.excilys.cdb.service" ) 
 @PropertySource("classpath:datasourcemysql.properties")
-public class MainConfig implements WebApplicationInitializer { /// WebMvcConfigurer
+public class MainConfig implements WebApplicationInitializer {
 	
 	@Value("${dataSource.driverClassName}")
 	private String jdbcDriver;

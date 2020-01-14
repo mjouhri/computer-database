@@ -74,20 +74,20 @@
                         </th>
                         <th>
                             <spring:message code="lbl.computerName" /> - 
-                             <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=name" id="orderBy">
+                             <a href="http://localhost:8080/cdb_project?orderBy=name" id="orderBy">
                                         <i class="fa fa-sort fa-lg"></i>
                               </a>
                         </th>
                         <th>
                             <spring:message code="lbl.introducedDate" /> - 
-                            <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=introduced" id="orderBy">
+                            <a href="http://localhost:8080/cdb_project?orderBy=introduced" id="orderBy">
                                         <i class="fa fa-sort fa-lg"></i>
                               </a>
                         </th>
                         <!-- Table header for Discontinued Date -->
                         <th>
                             <spring:message code="lbl.discontinuedDate" /> - 
-                            <a href="http://localhost:8080/cdb_project/ServletMain?orderBy=discontinued" id="orderBy">
+                            <a href="http://localhost:8080/cdb_project?orderBy=discontinued" id="orderBy">
                                         <i class="fa fa-sort fa-lg"></i>
                               </a>
                         </th>
