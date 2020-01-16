@@ -2,9 +2,7 @@ package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +14,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.excilys.cdb.mapper.CompanyDaoMapper;
-import com.excilys.cdb.mapper.ComputerDaoMapper;
 import com.excilys.cdb.model.Company;
 
 @Repository

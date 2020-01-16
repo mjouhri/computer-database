@@ -13,7 +13,6 @@
 
 <style><%@ include file ="../css/main.css"%></style>
 <style><%@ include file ="../css/bootstrap.min.css"%></style>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 
 
@@ -48,7 +47,7 @@
                     <a class="btn btn-success" id="addComputer" href="http://localhost:8080/cdb_project/addcomputer">
  						<spring:message code="lbl.addComputer" /></a> 
                     <a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">
-                    <spring:message code="lbl.edit" /></a> 
+                    <spring:message code="lbl.edit"/></a> 
                 </div>
             </div>
         </div>

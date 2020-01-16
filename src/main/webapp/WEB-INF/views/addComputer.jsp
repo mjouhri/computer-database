@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <!DOCTYPE html>
 <html>
@@ -41,6 +42,9 @@ var validator = $("#addForm").validate({
 validator.form();
 </script>
 
+<a href="?locale=en"><img style="margin-left: 50px;" src="https://cdn.icon-icons.com/icons2/107/PNG/512/united_kingdom_flag_flags_18060.png" id="drapeau" width="24" height="24" alt="England"> </a>
+<a href="?locale=fr"><img style="margin-left: 10px;" src="http://www.vogo-group.com/wp-content/uploads/2019/10/france_icon.png" id="drapeau" alt="France" width="24" height="24"></a>  
+
 </head>
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
@@ -53,26 +57,26 @@ validator.form();
         <div class="container">
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2 box">
-                    <h1>Add Computer</h1>
+                    <h1>  <spring:message code="lbl.addComputer"/> </h1>
                     <form id="addForm" action="addcomputer" method="POST">
                         <fieldset>
                             <div class="form-group">
-                                <label for="computerName">Computer name</label>
+                                <label for="computerName"><spring:message code="lbl.computerName"/></label>
                                 <input type="text" class="form-control" id="computerName" name="computerName" placeholder="Computer name"
                                  required>
                             </div>
                             <div class="form-group">
-                                <label for="introduced">Introduced date</label>
+                                <label for="introduced"><spring:message code="lbl.introducedDate"/></label>
                                 <input type="date" class="form-control" id="introduced" name="introduced" placeholder="Introduced date"
                                 data-validation="date" data-validation-format="yyyy-mm-dd">
                             </div>
                             <div class="form-group">
-                                <label for="discontinued">Discontinued date</label>
+                                <label for="discontinued"><spring:message code="lbl.discontinuedDate"/></label>
                                 <input type="date" class="form-control" id="discontinued" name="discontinued"  placeholder="Discontinued date"
                                 data-validation="date" data-validation-format="yyyy-mm-dd">
                             </div>
                             <div class="form-group">
-                                <label for="companyId">Company</label>
+                                <label for="companyId"><spring:message code="lbl.company"/></label>
                                  
 	                                <select class="form-control" name ="companyId" id="companyId" >
 	                                <c:forEach items="${listCompany}" var="company">
