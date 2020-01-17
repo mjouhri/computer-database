@@ -2,10 +2,15 @@ package com.excilys.cdb.dto;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Computer.ComputerBuilder;
 
-public class Computer {
+public class ComputerEntity {
 	
 	private int id;
 	private String name;
@@ -14,11 +19,11 @@ public class Computer {
 	private int idCompany;
 	private String nameCompany;
 	
-	public Computer() {
+	public ComputerEntity() {
 		super();
 	}
 	
-	private Computer(ComputerBuilder builder) {
+	private ComputerEntity(ComputerBuilder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.introduced = builder.introduced;
@@ -27,7 +32,7 @@ public class Computer {
 		this.nameCompany = builder.nameCompany;
 	}
 
-	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, int idCompany,
+	public ComputerEntity(String name, LocalDateTime introduced, LocalDateTime discontinued, int idCompany,
 			String nameCompany) {
 		super();
 		this.name = name;
@@ -37,6 +42,58 @@ public class Computer {
 		this.nameCompany = nameCompany;
 	}
 	
+	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public LocalDateTime getIntroduced() {
+		return introduced;
+	}
+
+	public void setIntroduced(LocalDateTime introduced) {
+		this.introduced = introduced;
+	}
+
+	public LocalDateTime getDiscontinued() {
+		return discontinued;
+	}
+
+	public void setDiscontinued(LocalDateTime discontinued) {
+		this.discontinued = discontinued;
+	}
+
+	public int getIdCompany() {
+		return idCompany;
+	}
+
+	public void setIdCompany(int idCompany) {
+		this.idCompany = idCompany;
+	}
+
+	public String getNameCompany() {
+		return nameCompany;
+	}
+
+	public void setNameCompany(String nameCompany) {
+		this.nameCompany = nameCompany;
+	}
+
+
+
 	public static class ComputerBuilder {
 		private int id;
 		private String name;
@@ -91,8 +148,8 @@ public class Computer {
 			return this;
 		}
 
-		public Computer build() {
-			return new Computer(this);
+		public ComputerEntity build() {
+			return new ComputerEntity(this);
 		}
 		
 		

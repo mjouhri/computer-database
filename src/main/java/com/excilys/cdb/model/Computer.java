@@ -2,10 +2,18 @@ package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.excilys.cdb.mapper.Mapper;
 
+@Entity
+@Table(name = "company")
 public class Computer {
-	
+	@Id
+	@Column(name="id")
 	private int id;
 	private String name;
 	private LocalDateTime introduced;

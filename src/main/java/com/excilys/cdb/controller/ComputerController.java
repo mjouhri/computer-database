@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.excilys.cdb.exeception.DateFormatException;
+import com.excilys.cdb.exeception.DateIntervaleExecption;
+import com.excilys.cdb.exeception.NameFormatException;
+import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyService;
@@ -98,29 +102,48 @@ public class ComputerController  {
 	}
 	
 	@PostMapping("/addcomputer")
-	public String searchPost(
+	public String searchPost (
 			@RequestParam(required = false, defaultValue = "") String computerName,
 			@RequestParam(required = false, defaultValue = "") String introduced,
 			@RequestParam(required = false, defaultValue = "") String discontinued,
 			@RequestParam(required = false, defaultValue = "-1") int companyId,
 			Model model) {
 		
-		if(Validator.ValidateAddComputer(computerName, introduced, discontinued)) {
+		
+		try {
+			
+			Validator.validationComputer(computerName, 
+					Mapper.StringToLocalDateTime(introduced), 
+					Mapper.StringToLocalDateTime(discontinued)) ;
+				
 			computerService.newComputer(
-					
-					new Computer.ComputerBuilder()
-									.setName(computerName)
-									.setIntroduced(introduced)
-									.setDiscontinued(discontinued)
-									.setCompany(new Company.CompanyBuilder()
-													.idCompany(companyId)
-													.nameCompany(null)
-													.build())
-									.build()
-								);
+				new Computer.ComputerBuilder()
+								.setName(computerName)
+								.setIntroduced(introduced)
+								.setDiscontinued(discontinued)
+								.setCompany(new Company.CompanyBuilder()
+												.idCompany(companyId)
+												.nameCompany(null)
+												.build())
+								.build()
+							); 
+			
+					listCompany = companyService.getListCompany();
+					model.addAttribute("listCompany", listCompany);
+			
+		} catch(NameFormatException e) {
+			return "addComputer";
 		}
-		listCompany = companyService.getListCompany();
-		model.addAttribute("listCompany", listCompany);
+		catch(DateIntervaleExecption e) {
+			return "addComputer";
+			}
+		catch(DateFormatException e) {
+			return "addComputer";
+			}
+		catch (Exception e) { 
+			return "addComputer";
+		}
+		
 		
 		return "addComputer";
 	}
@@ -156,7 +179,7 @@ public class ComputerController  {
 	
 	
 	
-	@GetMapping("/delete")
+	@GetMapping("/edit")
 	public String editPost(Model model,
 			@RequestParam(required = false, defaultValue = "") String computerName,
 			@RequestParam(required = false, defaultValue = "") String introduced,
@@ -164,21 +187,39 @@ public class ComputerController  {
 			@RequestParam(required = false, defaultValue = "-1") int companyId
 			) {
 		
-		if(Validator.ValidateAddComputer(computerName, introduced, discontinued)) {
-			computerService.updateComputer(
+		try {
 					
-					new Computer.ComputerBuilder()
-									.setId(computer.getId())
-									.setName(computerName)
-									.setIntroduced(introduced)
-									.setDiscontinued(discontinued)
-									.setCompany(new Company.CompanyBuilder()
-													.idCompany(companyId)
-													.nameCompany(null)
-													.build())
-									.build()
-								);
-		}
+					Validator.validationComputer(computerName, 
+							Mapper.StringToLocalDateTime(introduced), 
+							Mapper.StringToLocalDateTime(discontinued)) ;
+						
+					computerService.newComputer(
+						new Computer.ComputerBuilder()
+										.setName(computerName)
+										.setIntroduced(introduced)
+										.setDiscontinued(discontinued)
+										.setCompany(new Company.CompanyBuilder()
+														.idCompany(companyId)
+														.nameCompany(null)
+														.build())
+										.build()
+									); 
+					
+							listCompany = companyService.getListCompany();
+							model.addAttribute("listCompany", listCompany);
+					
+				} catch(NameFormatException e) {
+					return "addComputer";
+				}
+				catch(DateIntervaleExecption e) {
+					return "addComputer";
+					}
+				catch(DateFormatException e) {
+					return "addComputer";
+					}
+				catch (Exception e) { 
+					return "addComputer";
+				}
 		
 		listCompany = companyService.getListCompany();
 		model.addAttribute("listCompany", listCompany);
