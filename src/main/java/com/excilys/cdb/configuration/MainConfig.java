@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -16,15 +15,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.Properties;
-
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -77,14 +68,13 @@ public class MainConfig implements WebApplicationInitializer {
 	  }
 	
 	
-	
-	@Bean
-	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-	    JpaTransactionManager transactionManager = new JpaTransactionManager();
-	    transactionManager.setEntityManagerFactory(emf);
-
-	    return transactionManager;
-	}
+//	@Bean
+//	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+//	    JpaTransactionManager transactionManager = new JpaTransactionManager();
+//	    transactionManager.setEntityManagerFactory(emf);
+//
+//	    return transactionManager;
+//	}
 //
 //	@Bean
 //	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
