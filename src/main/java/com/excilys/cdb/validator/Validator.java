@@ -10,11 +10,8 @@ public class Validator {
 	
 	public static void validationComputer(String name, LocalDateTime introduced, 
 			LocalDateTime discontinued) throws DateIntervaleExecption, DateFormatException, NameFormatException{
-
 			validationName(name);
 			validationDate(introduced, discontinued);
-			
-
 	}
 	
 	private static void validationDate(LocalDateTime introduced, LocalDateTime discontinued) throws DateIntervaleExecption, DateFormatException {

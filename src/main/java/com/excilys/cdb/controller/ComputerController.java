@@ -28,7 +28,6 @@ import com.excilys.cdb.validator.Validator;
 public class ComputerController  {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
-	
 	private int nbComputers = 0;
 	private static int sizePage = 10;
 	private int nbPagesi = 0;
@@ -102,7 +101,7 @@ public class ComputerController  {
 	}
 	
 	@PostMapping("/addcomputer")
-	public String searchPost (
+	public String addComputerPost (
 			@RequestParam(required = false, defaultValue = "") String computerName,
 			@RequestParam(required = false, defaultValue = "") String introduced,
 			@RequestParam(required = false, defaultValue = "") String discontinued,
@@ -128,21 +127,21 @@ public class ComputerController  {
 								.build()
 							); 
 			
-					listCompany = companyService.getListCompany();
-					model.addAttribute("listCompany", listCompany);
+					//listCompany = companyService.getListCompany();
+					//model.addAttribute("listCompany", listCompany);
 			
 		} catch(NameFormatException e) {
+			model.addAttribute("name", e.getMessage());
 			return "addComputer";
-		}
+			}
 		catch(DateIntervaleExecption e) {
+			model.addAttribute("introduced", e.getMessage());
 			return "addComputer";
 			}
 		catch(DateFormatException e) {
+			model.addAttribute("discontinued", e.getMessage());
 			return "addComputer";
 			}
-		catch (Exception e) { 
-			return "addComputer";
-		}
 		
 		
 		return "addComputer";
@@ -160,7 +159,7 @@ public class ComputerController  {
 	}
 	
 	@GetMapping("/edit")
-	public String edit(Model model,
+	public String editGet(Model model,
 			@RequestParam(required = false, defaultValue = "-1") int companyId) {
 		
 		
@@ -174,12 +173,11 @@ public class ComputerController  {
 		
 		
 		return "dashboard";
-	
 	}
 	
 	
 	
-	@GetMapping("/edit")
+	@PostMapping("/edit")
 	public String editPost(Model model,
 			@RequestParam(required = false, defaultValue = "") String computerName,
 			@RequestParam(required = false, defaultValue = "") String introduced,
@@ -209,17 +207,17 @@ public class ComputerController  {
 							model.addAttribute("listCompany", listCompany);
 					
 				} catch(NameFormatException e) {
+					model.addAttribute("name", e.getMessage());
 					return "addComputer";
-				}
+					}
 				catch(DateIntervaleExecption e) {
+					model.addAttribute("discontinued", e.getMessage());
 					return "addComputer";
 					}
 				catch(DateFormatException e) {
+					model.addAttribute("discontinued", e.getMessage());
 					return "addComputer";
 					}
-				catch (Exception e) { 
-					return "addComputer";
-				}
 		
 		listCompany = companyService.getListCompany();
 		model.addAttribute("listCompany", listCompany);
