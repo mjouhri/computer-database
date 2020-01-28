@@ -61,7 +61,6 @@ public class ComputerDAO {
     		+ " LEFT JOIN company ON ct.company_id = company.id"
     		+ " ORDER BY ";
 	
-	// private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
 	
 	@Autowired
 	public ComputerDAO(DataSource dataSource) {

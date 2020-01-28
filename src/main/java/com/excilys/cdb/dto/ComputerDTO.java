@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Computer.ComputerBuilder;
 
-public class ComputerEntity {
+public class ComputerDTO {
 	
 	private int id;
 	private String name;
@@ -19,11 +19,11 @@ public class ComputerEntity {
 	private int idCompany;
 	private String nameCompany;
 	
-	public ComputerEntity() {
+	public ComputerDTO() {
 		super();
 	}
 	
-	private ComputerEntity(ComputerBuilder builder) {
+	private ComputerDTO(ComputerBuilder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.introduced = builder.introduced;
@@ -32,7 +32,7 @@ public class ComputerEntity {
 		this.nameCompany = builder.nameCompany;
 	}
 
-	public ComputerEntity(String name, LocalDateTime introduced, LocalDateTime discontinued, int idCompany,
+	public ComputerDTO(String name, LocalDateTime introduced, LocalDateTime discontinued, int idCompany,
 			String nameCompany) {
 		super();
 		this.name = name;
@@ -148,8 +148,8 @@ public class ComputerEntity {
 			return this;
 		}
 
-		public ComputerEntity build() {
-			return new ComputerEntity(this);
+		public ComputerDTO build() {
+			return new ComputerDTO(this);
 		}
 		
 		

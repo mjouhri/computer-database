@@ -15,13 +15,21 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 @Configuration
+@EnableTransactionManagement
 @EnableWebMvc
+@EnableWebSecurity
 @ComponentScan("com.excilys.cdb.controller,"
 		+ "com.excilys.cdb.persistence,"
 		+ "com.excilys.cdb.service" ) 
@@ -67,43 +75,10 @@ public class MainConfig implements WebApplicationInitializer {
 	      return viewResolver;
 	  }
 	
-	
 //	@Bean
-//	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-//	    JpaTransactionManager transactionManager = new JpaTransactionManager();
-//	    transactionManager.setEntityManagerFactory(emf);
-//
-//	    return transactionManager;
+//	public AuthenticationManager authenticationManagerBean() throws Exception {
+//		return super.authenticationManagerBean();
 //	}
-//
-//	@Bean
-//	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
-//	    return new PersistenceExceptionTranslationPostProcessor();
-//	}
-
-//	 @Bean
-//	   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//	      LocalContainerEntityManagerFactoryBean em 
-//	        = new LocalContainerEntityManagerFactoryBean();
-//	      em.setDataSource(dataSource());
-//	      em.setPackagesToScan(new String[] { "com.excilys.model" });
-//
-//	      JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-//	      em.setJpaVendorAdapter(vendorAdapter);
-//	    //  em.setJpaProperties(additionalProperties());
-//
-//	      return em;
-//	   }
-
-//	 Properties additionalProperties() {
-//		    Properties properties = new Properties();
-//		    properties.setProperty("hibernate.hbm2ddl.auto", "update");
-//		    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-//		    return properties;
-//		}
-//	
-	
-
 	
 }
 

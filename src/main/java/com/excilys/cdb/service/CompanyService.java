@@ -13,7 +13,7 @@ public class CompanyService {
 	private CompanyDAO companyDAO;
 
 	
-	private CompanyService(CompanyDAO companyDAO) {
+	public CompanyService(CompanyDAO companyDAO) {
 		this.companyDAO = companyDAO;
 	}
 	

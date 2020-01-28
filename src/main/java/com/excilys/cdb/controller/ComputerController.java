@@ -37,10 +37,10 @@ public class ComputerController  {
 	@Autowired
 	private ComputerService computerService;
 	@Autowired
-	private CompanyService companyService ;
+	private CompanyService companyService;
 	Computer computer ;
 
-	@GetMapping("/")  
+	@GetMapping("/")
     public String dashboard(
     		@RequestParam(required = false, defaultValue = "-1") int page,
     		@RequestParam(required = false, defaultValue = "-1") int nbPages,

@@ -16,7 +16,6 @@ public class CompanyDaoMapper  implements RowMapper<Company>  {
 				.idCompany(resultSet.getInt("id"))
         		.nameCompany(resultSet.getString("name"))
         		.build();
-		
 		return c;
 	}
 

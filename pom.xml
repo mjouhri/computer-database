@@ -25,12 +25,43 @@
 		<spring.version>5.2.1.RELEASE</spring.version>
 		<servlet-api>2.5</servlet-api>
 		<querydsl.version>4.1.4</querydsl.version>
+		<jackson.version>2.10.1</jackson.version>
+		<spring.security.version>5.2.1.RELEASE</spring.security.version>
 		
 		<hibernate-javax-persistance-version>1.0.0.Final</hibernate-javax-persistance-version>
 		<hibernate-entitymanager-version>5.4.2.Final</hibernate-entitymanager-version>
 	</properties>
 
 	<dependencies>
+	
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+	
+	<dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-web</artifactId>
+	    <version>${spring.security.version}</version>
+  </dependency>
+  <dependency>
+	    <groupId>org.springframework.security</groupId>
+	    <artifactId>spring-security-config</artifactId>
+	    <version>${spring.security.version}</version>
+  </dependency>
+	
+	<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
 	
 		<dependency>
 			<groupId>com.querydsl</groupId>

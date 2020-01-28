@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.excilys.cdb.dto.ComputerDTO;
+import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.ComputerDAO;
 
@@ -19,6 +21,11 @@ public class ComputerService {
 	 
 	public List<Computer> getListComputer() {
 		return computerDAO.getListComputer();
+	}
+	
+	public List<ComputerDTO> getAll() {
+		System.out.println(">> Computer Service");
+		return Mapper.listComputerToComptersDTO(getListComputer());
 	}
 	
 	public Computer getComputerById(int id) {
