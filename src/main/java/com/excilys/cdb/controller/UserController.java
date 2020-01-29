@@ -3,7 +3,6 @@ package com.excilys.cdb.controller;
 
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.excilys.cdb.configuration.JwtTokenUtil;
+import com.excilys.cdb.dto.UserDTO;
 import com.excilys.cdb.exeception.AuthenticationException;
 import com.excilys.cdb.model.User;
 import com.excilys.cdb.service.UserService;
@@ -33,8 +33,10 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 
 	
-	public UserController(UserService userService, AuthenticationManager authenticationManager,
-			JwtTokenUtil jwtTokenUtil) {
+	public UserController(
+			UserService userService, AuthenticationManager authenticationManager,
+			JwtTokenUtil jwtTokenUtil
+			) {
 		this.userService = userService;
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
@@ -43,14 +45,13 @@ public class UserController {
 	@CrossOrigin
 	@GetMapping
 	public User getUser() {
-		System.out.println("UserController");
 		return userService.getUser(1);
 	}
 	
 	
 	@CrossOrigin
 	@PostMapping
-	public ResponseEntity<?> login(@RequestBody User authentificationRequest) throws AuthenticationException {
+	public ResponseEntity<?> login(@RequestBody UserDTO authentificationRequest) throws AuthenticationException {
 		authenticate(authentificationRequest.getUsername(), authentificationRequest.getPassword());
 		final UserDetails userDetails = userService.loadUserByUsername(authentificationRequest.getUsername());
 		final String token = jwtTokenUtil.generateToken(userDetails);
@@ -68,6 +69,7 @@ public class UserController {
 
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			
 		} catch (DisabledException e) {
 			throw new AuthenticationException("USER_DISABLED", e);
 		} catch (BadCredentialsException e) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.cdb.dto.ComputerDTO;
+import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 
 public class Mapper {
@@ -37,6 +38,17 @@ public class Mapper {
 		
 		return listDTO;
 		
+	}
+	
+	public static Computer computerDAOToComputer(ComputerDTO computer) {
+		Computer c = new Computer.ComputerBuilder()
+				.setId(computer.getId())
+				.setName(computer.getName())
+				.setIntroduced(computer.getIntroduced())
+				.setDiscontinued(computer.getDiscontinued())
+				.build();		
+				
+		return c;
 	}
 
 }

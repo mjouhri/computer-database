@@ -5,9 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
@@ -39,9 +36,6 @@ public class CompanyDAO {
 	private DatabaseConnection databaseConnection;
 	
 	JdbcTemplate jdbcTemplate;
-	
-//	@PersistenceContext
-//	EntityManager entityManager;
 	
 	private CompanyDAO(DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);

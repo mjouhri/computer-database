@@ -2,8 +2,6 @@ package com.excilys.cdb.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +25,7 @@ import com.excilys.cdb.validator.Validator;
 @RequestMapping(path= "/")
 public class ComputerController  {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
 	private int nbComputers = 0;
 	private static int sizePage = 10;
 	private int nbPagesi = 0;

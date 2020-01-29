@@ -15,13 +15,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -29,10 +24,9 @@ import javax.servlet.ServletRegistration;
 @Configuration
 @EnableTransactionManagement
 @EnableWebMvc
-@EnableWebSecurity
 @ComponentScan("com.excilys.cdb.controller,"
 		+ "com.excilys.cdb.persistence,"
-		+ "com.excilys.cdb.service" ) 
+		+ "com.excilys.cdb.service," + "com.excilys.cdb.configuration") 
 @PropertySource("classpath:datasourcemysql.properties")
 public class MainConfig implements WebApplicationInitializer {
 	
@@ -45,10 +39,11 @@ public class MainConfig implements WebApplicationInitializer {
 	@Value("${dataSource.password}")
 	private String password;
 		
+		
 	@Override
 	public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
-        webCtx.register(MainConfig.class, SpringMVCConfig.class);
+        webCtx.register(MainConfig.class, SpringMVCConfig.class, SwaggerConfig.class, SpringSecurityConfig.class);
         webCtx.setServletContext(ctx);
         
         ServletRegistration.Dynamic servlet = ctx.addServlet("dispatcher", new DispatcherServlet(webCtx));
@@ -75,10 +70,6 @@ public class MainConfig implements WebApplicationInitializer {
 	      return viewResolver;
 	  }
 	
-//	@Bean
-//	public AuthenticationManager authenticationManagerBean() throws Exception {
-//		return super.authenticationManagerBean();
-//	}
 	
 }
 

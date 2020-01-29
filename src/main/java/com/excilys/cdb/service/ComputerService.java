@@ -24,7 +24,6 @@ public class ComputerService {
 	}
 	
 	public List<ComputerDTO> getAll() {
-		System.out.println(">> Computer Service");
 		return Mapper.listComputerToComptersDTO(getListComputer());
 	}
 	
@@ -36,12 +35,12 @@ public class ComputerService {
 		return computerDAO.newComputer(computer);
 	}
 	
-	public void updateComputer(Computer computer) {
-		computerDAO.updateComputer(computer);
+	public boolean updateComputer(Computer computer) {
+		return computerDAO.updateComputer(computer);
 	}
 	
-	public void deleteComputer(int id) {
-		computerDAO.deleteComputer(id);
+	public boolean deleteComputer(int id) {
+		return computerDAO.deleteComputer(id);
 	}
 	
 	public List<Computer>  getPage(int page, int length) {
@@ -57,7 +56,6 @@ public class ComputerService {
 	}
 	
 	public List<Computer> getComputersOrderBy(String columnName){
-		
 		return computerDAO.getComputersOrderBy(columnName);
 	}
 

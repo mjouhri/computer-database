@@ -17,7 +17,7 @@ public class UserDAO {
 	
 	private static final String FIND_BY_USERNAME = "select id ,username, password"
     		+ " from user"
-    	 	+ " where id = ? " ;
+    	 	+ " where username = ? " ;
 	
 	private static final String NEW_USER= 	"insert into user (id, username, password)"
 			+ " values (?, ?, ?, ?)";
