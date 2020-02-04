@@ -1,122 +1,82 @@
 package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
+import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.excilys.cdb.mapper.CompanyDaoMapper;
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.model.Computer;
 
+@Repository
 public class CompanyDAO {
-	
-	private MySQLAccess mySQLAccess;
-	private Connection connect = null;
-	private Statement statement = null;
-	private ResultSet resultSet = null;
+
 	
 	private static final String FIND_ONE_COMPANY = "select id ,name "
-    		+ "from company "
-    		+ "where id = ? " ;
+										    		+ "from company "
+										    	 	+ "where id = ? " ;
 	
-	public CompanyDAO() {
-		this.mySQLAccess = new MySQLAccess();
-		this.connect = this.mySQLAccess.getConnect();
-	}
+	private static final String FIND_ALL_COMPANYS = "select id, name"
+    												+ " from company;";
 	
-	public CompanyDAO(MySQLAccess mySQLAccess) {
-		super();
-		this.mySQLAccess = mySQLAccess;
-		connect = this.mySQLAccess.getConnect();
+	private static final String DELETE_COMPANY_BY_COMPANYID = "delete from company where id = ? ;";
+	
+	private static final String DELETE_COMPUTERS_BY_COMPANYID = "delete from computer where company_id = ? ;";
+	
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAO.class);	
+	
+	private DatabaseConnection databaseConnection;
+	
+	JdbcTemplate jdbcTemplate;
+	
+	private CompanyDAO(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
 	public Optional<Company> getCompanyById(int id) {
 		
-		Company company = null; 
+		return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_ONE_COMPANY, new Object[] { id }, new CompanyDaoMapper()));
 		
-		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPANY);) {
+	}
+	
+	
+	public List<Company> getListCompany() {
+		
+		return jdbcTemplate.query(FIND_ALL_COMPANYS, new CompanyDaoMapper());
+		
+	}
+	
+	public void deleteCompany(int companyId) {
+		
+		try (	Connection connect = databaseConnection.getConnection();
+				PreparedStatement preparedStmt = connect.prepareStatement(DELETE_COMPANY_BY_COMPANYID);
+				PreparedStatement preparedStmt2 = connect.prepareStatement(DELETE_COMPUTERS_BY_COMPANYID);
+				){
 			
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			System.err.println("hello error  2");
-			if(resultSet.next()){
+				connect.setAutoCommit(false);
+			
+				preparedStmt2.setInt(1, companyId);
+				preparedStmt2.execute();
 				
-				company = new Company(resultSet.getInt("id"),
-		        		resultSet.getString("name")
-						);
-
-			}
+				preparedStmt.setInt(1, companyId);
+				preparedStmt.execute();
+				// rollback
+				connect.commit();
+		      
+				LOGGER.info("success delete company");
 			
-			System.err.println("hello error after if");
-			
-
+		} catch (SQLException e) {
+				LOGGER.error("failed delete company : " + e);
 		}
-		catch (Exception e) {
-			System.err.println("hello error");
-			e.printStackTrace();
-		}
-		
-		
-		return Optional.ofNullable(company);
 		
 	}
-	
-	
-	public ArrayList<Company> getListCompany() {
-		
-		ArrayList list = new ArrayList<Company>();
-		
-		try {
-			statement = connect.createStatement();
-			
-			resultSet = statement
-                    .executeQuery("select id, name"
-                    		+ " from company;"
-                    		);
-			
-			
-			
-		      while (resultSet.next())
-		      {
-		        int id = resultSet.getInt("id");
-		        String name = resultSet.getString("name");
-		        
-		        
-		        // recuperer la company
-		        Company c = new Company(id, name);
-		        System.out.println(c.toString());
-		        
-		        list.add(c);
-		   
-		      }
-			
-		
-            
-		} catch (Exception e) {
-			System.err.println("CompanyDAO:getListCompany : " +e.getMessage());
-		}
-		
-		
-		return list;
-	}
-	
-	
-	 public void close() {
-	        try {
-	            if (resultSet != null) {
-	                resultSet.close();
-	            }
-
-	            if (statement != null) {
-	                statement.close();
-	            }
-
-	        } catch (Exception e) {
-
-	        }
-	    }
 
 }

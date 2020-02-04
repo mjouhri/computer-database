@@ -1,229 +1,122 @@
 package com.excilys.cdb.persistence;
 
-import java.sql.Connection;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.excilys.cdb.model.Company;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.excilys.cdb.mapper.ComputerDaoMapper;
 import com.excilys.cdb.model.Computer;
 
+@Repository
 public class ComputerDAO {
 	
-	private MySQLAccess mySQLAccess;
-	private Connection connect = null;
-	private Statement statement = null;
-	private ResultSet resultSet = null;
+	JdbcTemplate jdbcTemplate;
 	
-	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued, "
-											    		+ "ct.company_id, cn.name as company_name"
-											    		+ " from computer ct, company cn"
-											    		+ " where ct.company_id = cn.id;";
+	private static final String FIND_ALL_COMPUTERS = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+											    		+ " ct.company_id, company.id, company.name as company_name"
+											    		+ " from computer ct"
+											    		+ " LEFT JOIN company ON ct.company_id = company.id";
 	
-	private static final String FIND_ONE_COMPUTER = "select ct.id, ct.name, ct.introduced, ct.discontinued, "
-											    		+ "ct.company_id "
-											    		+ "from computer ct"
-											    		+ "and ct.company_id = ? ";
-	private static final String NEW_COMPUTER = 		"insert into computer (name, introduced, discontinued, company_id)"
-			   + " values (?, ?, ?, ?)";
+	private static final String FIND_ONE_COMPUTER = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+										    		+ " ct.company_id, company.id, company.name as company_name"
+										    		+ " from computer ct"
+										    		+ " LEFT JOIN company ON ct.company_id = company.id"
+											    	+ " where id = ? ";
+	
+	private static final String NEW_COMPUTER 	= 	"insert into computer (name, introduced, discontinued, company_id)"
+														+ " values (?, ?, ?, ?)";
+	
 	private static final String UPDATE_COMPUTER =  	"UPDATE computer "
 											      		+ "SET name = ?,"
 											      		+ "introduced = ?, "
 											      		+ "discontinued = ?,"
 											      		+ "company_id = ?"
 											      		+ " WHERE id = ?";
-	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";;
+	
+	private static final String DELETE_COMPUTER = 	"delete from computer where id = ?";
+	
+	private static final String FIND_PAGE_2 =  "select computer.id, computer.name, computer.introduced, computer.discontinued,"
+									    		+ " computer.company_id, company.id, company.name as company_name"
+									    		+ " from computer"
+									    		+ " LEFT JOIN company ON computer.company_id = company.id"
+												+ " LIMIT ?, ?";
+	
+	private static final String SIZE_TABLE = "SELECT COUNT(*) as nb FROM computer";
+	
+	private static final String FIND_COMPUTER_BY_NAME = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+    		+ " ct.company_id, company.id, company.name as company_name"
+    		+ " from computer ct"
+    		+ " LEFT JOIN company ON ct.company_id = company.id"
+	    	+ " where ct.name like ? ";
 
+	private static final String ORDER_BY = "select ct.id, ct.name, ct.introduced, ct.discontinued,"
+    		+ " ct.company_id, company.id, company.name as company_name"
+    		+ " from computer ct"
+    		+ " LEFT JOIN company ON ct.company_id = company.id"
+    		+ " ORDER BY ";
 	
-	public ComputerDAO() {
-		this.mySQLAccess = new MySQLAccess();
-		this.connect = this.mySQLAccess.getConnect();
+	
+	@Autowired
+	public ComputerDAO(DataSource dataSource) {
+		jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-	
 
-	public ComputerDAO(MySQLAccess mySQLAccess) {
-		super();
-		this.mySQLAccess = mySQLAccess;
-		connect = this.mySQLAccess.getConnect();
-	}
-	
 	public List<Computer> getListComputer() {
-		
-		List<Computer> list = new ArrayList<Computer>();
-		
-		try(PreparedStatement preparedStmt = connect.prepareStatement(FIND_ALL_COMPUTERS);
-				ResultSet resultSet = preparedStmt.executeQuery();) {
-			
-		      while (resultSet.next())
-		      {
-		        
-		        Computer c = new Computer(resultSet.getInt("id"),
-		        		resultSet.getString("name"), 
-		        		resultSet.getTimestamp("introduced")==null?
-				        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
-				        resultSet.getTimestamp("discontinued")==null?
-						        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
-		        		 new Company(resultSet.getInt("company_id"),
-		        				 resultSet.getString("company_name")));
-		     
-		        list.add(c);   
-		      }
-		      
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return jdbcTemplate.query(FIND_ALL_COMPUTERS, new ComputerDaoMapper());
+	}
+	 
+	
+	public int getNbComputers() {
+		return jdbcTemplate.queryForObject(SIZE_TABLE, Integer.class);
+	}
 
-		return list;
+	public List<Computer> getPage(int page, int length) {
+		int startPage = (length) * (page + 1);
+		return jdbcTemplate.query(FIND_PAGE_2, new ComputerDaoMapper(), startPage, length);
 	}
 	
 	
 	public Optional<Computer> getComputerById(int id) {
-		
-		Computer computer = null; 
-		
-		try(PreparedStatement preparedStatement= connect.prepareStatement(FIND_ONE_COMPUTER);
-				
-				) {
-			
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			resultSet.next();
-		      
-			Computer c = new Computer(resultSet.getInt("id"),
-	        		resultSet.getString("name"), 
-	        		resultSet.getTimestamp("introduced")==null?
-			        		null:resultSet.getTimestamp("introduced").toLocalDateTime(), 
-			        resultSet.getTimestamp("discontinued")==null?
-					        null:resultSet.getTimestamp("discontinued").toLocalDateTime(),
-	        		 new Company(resultSet.getInt("company_id"),
-	        				 resultSet.getString("company_name")));
-			computer = c;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return Optional.of(computer);
+		return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_ONE_COMPUTER, new Object[] { id }, new ComputerDaoMapper()));
 	}
 	
-	public boolean newComputer(Computer computer) {
-		try {
-			   String query = "insert into computer (name, introduced, discontinued, company_id)"
-					   + " values (?, ?, ?, ?)";
-			   
-			     PreparedStatement preparedStmt = connect.prepareStatement(query);
-			     preparedStmt.setString (1, computer.getName());
-			     preparedStmt.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
-			     preparedStmt.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
-			     //preparedStmt.setString(4, null);
-			     if ( computer.getCompany() !=null ) preparedStmt.setInt(4, computer.getId());
-			     else preparedStmt.setString(4, null);
-//			     preparedStmt.setInt(4, computer!=null?computer.getId():null);
-			     preparedStmt.execute();
-			     
-			     
-			     return true;
-			      
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
+	public boolean newComputer(Computer computer) {	
+		return jdbcTemplate.update(NEW_COMPUTER,
+				computer.getName(),
+				computer.getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced()),
+				computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued()),
+				computer.getCompany()==null?null:computer.getCompany().getIdCompany()
+				) > 0;
 	}
 	
-	public void updateComputer(Computer computer) {
-		
-		try {
-			// create the java mysql update preparedstatement
-		      String query = ""
-		      		+ "UPDATE computer "
-		      		+ "SET name = ?,"
-		      		+ "introduced = ?, "
-		      		+ "discontinued = ?,"
-		      		+ "company_id = ?"
-		      		+ " WHERE id = ?";
-		      PreparedStatement preparedStmt = connect.prepareStatement(query);  
-		      preparedStmt.setString(1, computer.getName());
-//		      preparedStmt.setDate(2, computer.getIntroduced());
-//		      preparedStmt.setDate(3, computer.getDiscontinued());
-		      preparedStmt.setInt (4, 1);
-		      preparedStmt.setInt   (5, computer.getId());
-		      
-		     
-		      // execute the java preparedstatement
-		      preparedStmt.executeUpdate();
-		      System.out.println("here");
-			
-
-			
-			
-		} catch (Exception e) {
-			System.err.println("computerDAO:update : "+e.getMessage());
-		}
-		
+	public boolean updateComputer(Computer computer) {
+		return jdbcTemplate.update(UPDATE_COMPUTER,
+				computer.getId(),
+				computer.getName(),
+				computer.getIntroduced() ==null?null:Timestamp.valueOf(computer.getIntroduced()),
+				computer.getDiscontinued() ==null?null:Timestamp.valueOf(computer.getDiscontinued()),
+				computer.getCompany()==null?null:computer.getCompany().getIdCompany()
+				) > 0;
 	}
 	
-	public void deleteComputer(int id) {
-			
-			try {
-				
-				String query = "delete from computer where id = ?";
-			      PreparedStatement preparedStmt = connect.prepareStatement(query);
-			      preparedStmt.setInt(1, id);
-
-			      // execute the preparedstatement
-			      preparedStmt.execute();
-				
-				
-				
-			} catch (Exception e) {
-				System.err.println("computerDAO:deleteComputer : "+e.getMessage());
-			}
-			
+	public boolean deleteComputer(int id) {	
+		return jdbcTemplate.update(DELETE_COMPUTER,	id) > 0;	
 		}
 	
-	
-	
-    public void close() {
-        try {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-
-            if (statement != null) {
-                statement.close();
-            }
-
-        } catch (Exception e) {
-
-        }
-    }
-	
-	public MySQLAccess getMySQLAccess() {
-		return mySQLAccess;
-	}
-
-	public void setMySQLAccess(MySQLAccess mySQLAccess) {
-		this.mySQLAccess = mySQLAccess;
-	}
-
-	public Connection getConnect() {
-		return connect;
-	}
-
-	public void setConnect(Connection connect) {
-		this.connect = connect;
+	public List<Computer> getComputersByName(String name){
+		return  jdbcTemplate.query(FIND_COMPUTER_BY_NAME,new ComputerDaoMapper(), "%" + name+ "%");
 	}
 	
 	
-	
-	
+	public List<Computer> getComputersOrderBy(String columnName){
+		return  jdbcTemplate.query((ORDER_BY+"ct."+columnName),new ComputerDaoMapper());
+		
 
+	}
 }

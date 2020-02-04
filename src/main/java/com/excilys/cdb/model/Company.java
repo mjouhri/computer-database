@@ -1,17 +1,25 @@
 package com.excilys.cdb.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "company")
 public class Company {
-	
+	@Id
+	@Column(name="id")
 	private int idCompany;
 	private String nameCompany;
 	
-	public Company() {
+	public Company() {  
 
 	}
-
+	
 	public Company(int idCompany, String nameCompany) {
 		super();
-		this.idCompany = idCompany; 
+		this.idCompany = idCompany;
 		this.nameCompany = nameCompany;
 	}
 
@@ -62,6 +70,33 @@ public class Company {
 		} else if (!nameCompany.equals(other.nameCompany))
 			return false;
 		return true;
+	}
+	
+	private Company(CompanyBuilder builder) {
+		this.idCompany = builder.idCompany;
+		this.nameCompany = builder.nameCompany;
+	}
+	
+	public static class CompanyBuilder {
+		private int idCompany;
+		private String nameCompany;
+
+		public CompanyBuilder() {
+		}
+
+		public CompanyBuilder idCompany(int idCompany) {
+			this.idCompany = idCompany;
+			return this;
+		}
+
+		public CompanyBuilder nameCompany(String nameCompany) {
+			this.nameCompany = nameCompany;
+			return this;
+		}
+
+		public Company build() {
+			return new Company(this);
+		}
 	}
 	
 	

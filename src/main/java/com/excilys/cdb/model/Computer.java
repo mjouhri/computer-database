@@ -2,56 +2,29 @@ package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.excilys.cdb.mapper.Mapper;
+
+@Entity
+@Table(name = "company")
 public class Computer {
-	
+	@Id
+	@Column(name="id")
 	private int id;
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
 	private Company company;
-	
-	// builder 
+ 
 	 
 	public Computer() {
-		this.id = -1;
-		this.name = null;
-		this.company = new Company();
-	}
-	
-	public Computer(int id, String name, LocalDateTime introduced, LocalDateTime discontinued, String companyName) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = new Company();
-	}
-	
-	public Computer(int id, String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}
-	
-	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, String companyName) {
-		super();
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = new Company();
-	}
-	
-	public Computer(String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
-		super();
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}
 
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -143,8 +116,68 @@ public class Computer {
 			return false;
 		return true;
 	}
-
 	
+	private Computer(ComputerBuilder builder) {
+		this.id = builder.id;
+		this.name = builder.name;
+		this.introduced = builder.introduced;
+		this.discontinued = builder.discontinued;
+		this.company = builder.company;
+	}
+
+	public static class ComputerBuilder {
+		private int id;
+		private String name;
+		private LocalDateTime introduced;
+		private LocalDateTime discontinued;
+		private Company company;
+		
+		public ComputerBuilder() {
+		}
+		
+		public ComputerBuilder setId(int id) {
+			this.id = id;
+			return this;
+		}
+		public ComputerBuilder setName(String name) {
+			this.name = name;
+			return this;
+		}
+		public ComputerBuilder setIntroduced(LocalDateTime introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+		
+		public ComputerBuilder setIntroduced(String introduced) {
+			
+			Mapper.StringToLocalDateTime(introduced);
+		
+			return this;
+		}
+
+
+		public ComputerBuilder setDiscontinued(LocalDateTime discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+		
+		public ComputerBuilder setDiscontinued(String discontinued) {
+			
+			Mapper.StringToLocalDateTime(discontinued);
+			
+			return this;
+		} 
+		public ComputerBuilder setCompany(Company company) {
+			this.company = company;
+			return this;
+		}
+		
+		public Computer build() {
+			return new Computer(this);
+		}
+		
+		
+	}
 	
 	
 	

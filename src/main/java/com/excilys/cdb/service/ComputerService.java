@@ -1,19 +1,20 @@
 package com.excilys.cdb.service;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+import com.excilys.cdb.dto.ComputerDTO;
+import com.excilys.cdb.mapper.Mapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.persistence.ComputerDAO;
 
+@Service
 public class ComputerService {
+	
 	private ComputerDAO computerDAO;
-	
-	public ComputerService() {
-		this.computerDAO = new ComputerDAO();
-		
-	}
-	
+
+
 	public ComputerService(ComputerDAO computerDAO) {
 		this.computerDAO = computerDAO;
 	}	
@@ -22,26 +23,40 @@ public class ComputerService {
 		return computerDAO.getListComputer();
 	}
 	
+	public List<ComputerDTO> getAll() {
+		return Mapper.listComputerToComptersDTO(getListComputer());
+	}
+	
 	public Computer getComputerById(int id) {
-		return computerDAO.getComputerById(id).orElse(new Computer());
+		return computerDAO.getComputerById(id).orElse(null);
 	}
 	
 	public boolean newComputer(Computer computer) {
 		return computerDAO.newComputer(computer);
 	}
 	
-	public void updateComputer(Computer computer) {
-		computerDAO.updateComputer(computer);
+	public boolean updateComputer(Computer computer) {
+		return computerDAO.updateComputer(computer);
 	}
 	
-	public void deleteComputer(int id) {
-		computerDAO.deleteComputer(id);
+	public boolean deleteComputer(int id) {
+		return computerDAO.deleteComputer(id);
 	}
 	
-	public void close() {
-		computerDAO.close();
+	public List<Computer>  getPage(int page, int length) {
+		return computerDAO.getPage(page, length);
+	} 
+	
+	public int getNbComputers() {
+		return computerDAO.getNbComputers();
 	}
 	
+	public List<Computer>  getComputersByName(String name) {
+		return computerDAO.getComputersByName(name);
+	}
 	
+	public List<Computer> getComputersOrderBy(String columnName){
+		return computerDAO.getComputersOrderBy(columnName);
+	}
 
 }
